@@ -14,19 +14,14 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    long t;
-    cin>>t;
-
-    for(int i = 1; i <= t; ++i)
+    ll t;
+    cin >> t;
+    ll f = 5, zeros = 0;
+    while(f <= t)
     {
-        if( i == 1)
-          cout<<"0\n";
-        else if( i == 2)
-          cout<<"6\n";
-        else{
-          ll n = i * i;
-          cout<<(n * (n - 1)) / 2 - 4 * (i - 1)*(i - 2)<< endl;
-        }
+        zeros += t/f;
+        f *= 5;
     }
+    cout << zeros<<endl;
     return 0;
 }

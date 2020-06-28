@@ -12,21 +12,26 @@
 using namespace std;
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
     long t;
     cin>>t;
+    while(t--){
+        ll a,b;
+        cin >> a >> b;
 
-    for(int i = 1; i <= t; ++i)
-    {
-        if( i == 1)
-          cout<<"0\n";
-        else if( i == 2)
-          cout<<"6\n";
-        else{
-          ll n = i * i;
-          cout<<(n * (n - 1)) / 2 - 4 * (i - 1)*(i - 2)<< endl;
+        ll gr, sm;
+        if(a > b){
+            gr = a;
+            sm = b;
+        }else{
+            gr = b;
+            sm = a;
         }
+        ll x;
+        x = gr - sm;
+        if(sm - x == gr - 2*x && sm - x >= 0 && (sm - x) % 3 == 0)
+          cout<< "YES\n";
+        else
+          cout<< "NO\n";
     }
     return 0;
 }
