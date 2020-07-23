@@ -15,7 +15,7 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     string s;
-    bool odd = false;
+    bool odd = false, solExist = true;
     cin >> s;
     if(s.size() % 2 != 0)
       odd = true;
@@ -23,21 +23,45 @@ int main()
     ll i, n = s.size(), cnt[26] = {0};
     for(i = 0; i < n; ++i)
         cnt[(int)s[i] - 65]++;
+    
     string sol;
+    char mid;
     for(i = 0; i < 26; ++i)
     {
-        if(cnt[i] % 2 != 0)
-        {
-            if(odd){
-                odd = false;
-                
+        if(cnt[i] > 0){
+            if(cnt[i] % 2 == 0)
+                for(int j = 0; j < cnt[i]/2 ; ++j)
+                    sol.push_back('A' + i);
+            else
+            {
+                if(!odd){
+                    solExist = false;
+                    break;
+                }
+                else{
+                    mid = 'A' + i;
+                    for(int j = 0; j < cnt[i]/2; ++j)
+                        sol.push_back('A' + i);
+                    odd = false;
+                }
             }
         }
-        if(cnt[i] != 0)
-        {
-            for(int j = 0; j < cnt[i]; ++j)
-              sol.push_back('A' + i);
-        }
+    }
+
+    if(!solExist){
+        cout<<"NO SOLUTION\n";
+    }
+    else{
+    if(n % 2 == 1)
+        sol.push_back(mid);
+    
+    ll start = n % 2 == 0 ? sol.size() - 1: sol.size() - 2 ;
+    while(start >= 0){
+        sol.push_back(sol[start]);
+        start--;
+    }
+
+    cout << sol << endl;
     }
     return 0;
 }

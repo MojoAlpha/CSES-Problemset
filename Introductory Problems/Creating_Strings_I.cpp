@@ -4,7 +4,6 @@
 #define M 10000007
 #define O 1000000009
 #define vll vector<long long>
-#define vl vector<long>
 #define dis(n) cout<<n<<endl
 #define fo(i,N) for(int i=0; i<N; ++i)
 #define fos(i,b,N) for(int i=b; i<N; ++i)
@@ -15,10 +14,16 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    long t;
-    cin>>t;
-    while(t--){
-
+    string s;
+    cin >> s;
+    vector<string> sol;
+    sort(s.begin(), s.end());
+    sol.push_back(s);
+    while (next_permutation(s.begin(), s.end()))
+        sol.push_back(s);
+    cout << sol.size()<<endl;
+    for(int i = 0; i < sol.size(); ++i){
+        cout << sol[i] << endl;
     }
     return 0;
 }
