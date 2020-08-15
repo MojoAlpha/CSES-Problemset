@@ -11,33 +11,41 @@
 #define forr(i,N) for(i=N; i>=0; --i)
 
 using namespace std;
+
+ll binary_near(vll h, ll start, ll end, vll taken, ll val, ll ind){
+
+    ll mid = (start + end) / 2;
+
+    if(h[mid] > val)
+        return binary_near(h, start, mid, taken, val, ind);
+    
+    if(h[mid] == val)
+        return mid;
+
+    if(h[mid] > h[ind] && taken[mid] == 0)
+        return binary_near(h, mid, end , taken, val, mid);
+    return binary_near(h, mid, end, taken, val, ind);
+}
+
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
     ll n, m, i, j;
     cin >> n >> m;
-    ll h[n];
-    pair<ll, int> t[m];
+    vll h(n), t(m), res(m), taken(n);
     for(i = 0; i < n; ++i)
         cin >> h[i];
+    for(i = 0; i < m; ++i)
+        cin >>t[i];
+    for(i = 0; i < n; ++i)
+        taken[i] = 0;
+    sort(h.begin(), h.end());
+
     for(i = 0; i < m; ++i){
-        cin >>t[i].first;
-        t[i].second = i;
+        ll ans = binary_near(h, 0, n - 1, taken, t[i], n - 1);
+        cout << ans << endl;
     }
-    sort(h, h + n);
-    sort(t, t + m);
-    ll res[m] = {-1};
-    for(i = 0, j = 0; i < m && j < n ; ){
-        if(t[i].first >= h[j]){
-            res[t[i].second] = h[j];
-            i++;
-            j++;
-        }
-        else
-            i++;
-    }
-    for(i = 0; i < m ; ++i)
+
+    for(i = 0; i < m; ++i)
         cout << res[i] << endl;
     return 0;
 }
