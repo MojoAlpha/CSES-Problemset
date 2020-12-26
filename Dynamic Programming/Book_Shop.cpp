@@ -13,8 +13,19 @@
 using namespace std;
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    long n, x, i, j;
+    cin >> n >> x;
+    vl h(n), s(n);
+    fo(i, n) cin >> h[i];
+    fo(i, n) cin >> s[i];
+    long dp[n + 1][x + 1];
+    fo(i, x + 1) dp[0][i] = 0;
+    fo(i, n + 1) dp[i][0] = 0;
     
+    for(i = 1; i <= x; ++i) {
+        for(j = 1; j <= n; ++j) {
+            
+        }
+    }
     return 0;
 }

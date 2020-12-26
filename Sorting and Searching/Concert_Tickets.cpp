@@ -1,51 +1,39 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #define ll long long
 #define N 100005
 #define M 10000007
 #define O 1000000009
 #define vll vector<long long>
 #define vl vector<long>
-#define dis(n) cout<<n<<endl
-#define fo(i,N) for(int i=0; i<N; ++i)
-#define fos(i,b,N) for(int i=b; i<N; ++i)
-#define forr(i,N) for(i=N; i>=0; --i)
+#define dis(n) cout << n << endl
+#define fo(i, N) for (int i = 0; i < N; ++i)
+#define fos(i, b, N) for (int i = b; i < N; ++i)
+#define forr(i, N) for (i = N; i >= 0; --i)
 
 using namespace std;
 
-ll binary_near(vll h, ll start, ll end, vll taken, ll val, ll ind){
-
-    ll mid = (start + end) / 2;
-
-    if(h[mid] > val)
-        return binary_near(h, start, mid, taken, val, ind);
-    
-    if(h[mid] == val)
-        return mid;
-
-    if(h[mid] > h[ind] && taken[mid] == 0)
-        return binary_near(h, mid, end , taken, val, mid);
-    return binary_near(h, mid, end, taken, val, ind);
-}
-
 int main()
 {
-    ll n, m, i, j;
+    ll n, m, ticket, buyer;
     cin >> n >> m;
-    vll h(n), t(m), res(m), taken(n);
-    for(i = 0; i < n; ++i)
-        cin >> h[i];
-    for(i = 0; i < m; ++i)
-        cin >>t[i];
-    for(i = 0; i < n; ++i)
-        taken[i] = 0;
-    sort(h.begin(), h.end());
-
-    for(i = 0; i < m; ++i){
-        ll ans = binary_near(h, 0, n - 1, taken, t[i], n - 1);
-        cout << ans << endl;
+    multiset<ll, greater<int>> tickets;
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> ticket;
+        tickets.insert(ticket);
     }
 
-    for(i = 0; i < m; ++i)
-        cout << res[i] << endl;
+    for (int i = 0; i < m; ++i)
+    {
+        cin >> buyer;
+        auto itr = tickets.lower_bound(buyer);
+        if (itr == tickets.end())
+            cout << "-1\n";
+        else
+        {
+            cout << *itr << endl;
+            tickets.erase(itr);
+        }
+    }
     return 0;
 }

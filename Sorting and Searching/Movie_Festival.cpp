@@ -15,29 +15,25 @@ int main()
 {
     long n;
     cin >> n;
-    vector<pair<long, bool>> a;
+    vector<pair<long, long>> a;
 
     for (int i = 0; i < n; ++i)
     {
         long x, y;
         cin >> x >> y;
-        a.push_back(make_pair(x, true));
-        a.push_back(make_pair(y, false));
+        a.push_back(make_pair(y, x));
     }
 
     sort(a.begin(), a.end());
 
-    long res = INT_MIN, curr = 0;
-
-    for (long i = 0; i < a.size(); ++i)
+    long res = 1, curr = a[0].first;
+    for (int i = 1; i < a.size(); ++i)
     {
-        if (a[i].second == true)
+        if (a[i].second >= curr)
         {
-            curr++;
-            res = max(curr, res);
+            res++;
+            curr = a[i].first;
         }
-        else
-            curr--;
     }
 
     cout << res << endl;

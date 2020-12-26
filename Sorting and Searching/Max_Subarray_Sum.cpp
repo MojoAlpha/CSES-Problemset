@@ -9,12 +9,24 @@
 #define fo(i,N) for(int i=0; i<N; ++i)
 #define fos(i,b,N) for(int i=b; i<N; ++i)
 #define forr(i,N) for(i=N; i>=0; --i)
-
+ 
 using namespace std;
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    
+    long n;
+    cin >> n;
+    vl a(n);
+    fo(i, n) cin >> a[i];
+    long maxi = INT_MIN, sum = 0;
+    fo(i, n) {
+        sum += a[i];
+        if(sum > maxi)
+            maxi = sum;
+        if(sum < 0)
+            sum = 0;
+    }
+
+    cout << maxi;
+
     return 0;
 }

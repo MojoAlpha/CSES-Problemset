@@ -18,20 +18,26 @@ int main()
     ll dp[x + 1], a[n];
     for(i = 0; i < n; ++i)
         cin >> a[i];
+    sort(a, a + n);
+    long c[x + 1][n] = {0};
     dp[0] = 0;
     for(i = 1; i <= x; ++i) {
-        long j = 0;
-        dp[i] = 0;
-        while(j < n) {
-            if(i - a[j] > 0 && i - a[j] >= a[j])
-                dp[i] += dp[i - a[j]];
-            else if(i - a[j] == 0)
+        int j = 0;
+        while(j < n)
+        {
+            if(a[j] > i)
+                break;
+            if(i - a[j] == 0)
+            {
                 dp[i]++;
-            j++;
+                c[i][j]++;
+            }
+            else
+            {
+                
+            }
         }
-        cout << dp[i] << " ";
     }
-    cout << endl;
     cout << dp[x] << endl;
     return 0;
 }

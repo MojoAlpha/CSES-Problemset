@@ -13,33 +13,26 @@
 using namespace std;
 int main()
 {
-    long n;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    long n, t;
     cin >> n;
-    vector<pair<long, bool>> a;
+    multiset<long, less<int>> a;
 
     for (int i = 0; i < n; ++i)
     {
-        long x, y;
-        cin >> x >> y;
-        a.push_back(make_pair(x, true));
-        a.push_back(make_pair(y, false));
-    }
-
-    sort(a.begin(), a.end());
-
-    long res = INT_MIN, curr = 0;
-
-    for (long i = 0; i < a.size(); ++i)
-    {
-        if (a[i].second == true)
-        {
-            curr++;
-            res = max(curr, res);
-        }
+        cin >> t;
+        auto itr = a.upper_bound(t);
+        if (itr == a.end())
+            a.insert(t);
         else
-            curr--;
+        {
+            a.insert(itr, t);
+            a.erase(itr);
+        }
     }
 
-    cout << res << endl;
+    cout << a.size();
+
     return 0;
 }
