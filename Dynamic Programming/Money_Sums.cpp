@@ -22,22 +22,28 @@ using namespace std;
 int main()
 {
     fast;
-    ll n, x;
-    cin >> n >> x;
-    vll h(n), s(n);
-    fo(i, n) cin >> h[i];
-    fo(i, n) cin >> s[i];
-    ll dp[x + 1];
+    int n;
+    cin >> n;
+    vi a(n);
+    fo(i, n) cin >> a[i];
 
+    int sum = accumulate(a.begin(), a.end(), 0);
+    int dp[sum + 1];
     memset(dp, 0, sizeof(dp));
-    
-    for(long i = 1; i <= n; ++i)
-    {
-        for(long j = x; j > 0; --j)
-            if(j - h[i - 1] >= 0)
-                dp[j] = max(dp[j], s[i - 1] + dp[j - h[i - 1]]);
+    dp[0] = 1;
+
+    for(int i = 0; i < n; ++i) {
+        for(int j = sum; j >= a[i]; --j)
+            if(dp[j - a[i]] == 1)
+                dp[j] = 1;
     }
 
-    cout << dp[x];
+    cout << accumulate(dp, dp + sum, 0) << endl;
+    fo(i, sum) {
+        if(dp[i + 1] == 1)
+            cout << i + 1 << " ";
+    }
+
+
     return 0;
 }

@@ -9,26 +9,29 @@
 #define fo(i,N) for(int i=0; i<N; ++i)
 #define fos(i,b,N) for(int i=b; i<N; ++i)
 #define forr(i,N) for(i=N; i>=0; --i)
-
+ 
 using namespace std;
 int main()
 {
-    long n, x, i;
-    cin >> n >> x;
-    vll dp(x + 1, 0), a(n);
-    for(i = 0; i < n; ++i)
-        cin >> a[i];
+    long n;
+    cin >> n;
+    vll a(n);
+    fo(i, n) cin >> a[i];
+    sort(a.begin(), a.end());
+    ll res = 1;
 
-    dp[0] = 1;
-    
-    for(int i = 1; i <= n; ++i) {
-        for(int j = 1; j <= x; ++j) {
-            if(j - a[i - 1] >= 0) {
-                dp[j] += dp[j - a[i - 1]];
-                dp[j] = dp[j] % 1000000007;
-            }
+    if(a[0] != 1)
+        cout << "1\n";
+    else
+    {
+        for(long i = 1; i < n; ++i) {
+            if(a[i] <= res + 1)
+                res += a[i];
+            else
+                break;
         }
+        cout << res + 1;
     }
-    cout << dp[x] << endl;
+    
     return 0;
 }

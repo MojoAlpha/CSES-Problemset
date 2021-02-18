@@ -22,22 +22,27 @@ using namespace std;
 int main()
 {
     fast;
-    ll n, x;
-    cin >> n >> x;
-    vll h(n), s(n);
-    fo(i, n) cin >> h[i];
-    fo(i, n) cin >> s[i];
-    ll dp[x + 1];
-
+    ll n;
+    cin >> n;
+    ll S = n * (n + 1)  / 2;
+    if(S % 2 != 0) {
+        cout << "0";
+        exit(0);
+    }
+    S /= 2;
+    ll dp[n + 1][S + 1];
     memset(dp, 0, sizeof(dp));
-    
-    for(long i = 1; i <= n; ++i)
-    {
-        for(long j = x; j > 0; --j)
-            if(j - h[i - 1] >= 0)
-                dp[j] = max(dp[j], s[i - 1] + dp[j - h[i - 1]]);
+
+    dp[0][0] = 1;
+    for(long i = 1; i < n + 1; ++i) {
+        for(long j = 1; j < S + 1; ++j) {
+            dp[i][j] = dp[i - 1][j];
+            if(j - i >= 0)
+                dp[i][j] += dp[i - 1][j - i];
+            dp[i][j] %= 1000000007;
+        }
     }
 
-    cout << dp[x];
+    cout << dp[n][S];
     return 0;
 }

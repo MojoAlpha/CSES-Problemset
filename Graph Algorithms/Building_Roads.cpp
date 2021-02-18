@@ -19,25 +19,42 @@ const double PI = 3.141592653589793238;
 
 using namespace std;
 
-int main()
-{
-    fast;
-    ll n, x;
-    cin >> n >> x;
-    vll h(n), s(n);
-    fo(i, n) cin >> h[i];
-    fo(i, n) cin >> s[i];
-    ll dp[x + 1];
+vector<vl> g;
+vb vis;
 
-    memset(dp, 0, sizeof(dp));
-    
-    for(long i = 1; i <= n; ++i)
-    {
-        for(long j = x; j > 0; --j)
-            if(j - h[i - 1] >= 0)
-                dp[j] = max(dp[j], s[i - 1] + dp[j - h[i - 1]]);
+void dfs(long v) {
+    vis[v] = true;
+    for(long i = 0; i < g[v].size(); ++i) {
+        if(!vis[g[v][i]])
+            dfs(g[v][i]);
+    }
+}
+
+int main()
+{   
+    fast;
+    long n, m, a, b;
+    cin >> n >> m;
+    g.resize(n + 1);
+    vis.resize(n + 1, false);
+    vl res;
+
+    fo(i, m) {
+        cin >> a >> b;
+        g[a].push_back(b);
+        g[b].push_back(a);
     }
 
-    cout << dp[x];
+    for(long i = 1; i <= n; ++i) {
+        if(!vis[i]) {
+            res.push_back(i);
+            dfs(i);
+        }
+    }
+
+    cout << res.size() - 1 << endl;
+    fo(i, res.size() - 1)
+        cout << res[i] << " " << res[i + 1] << endl;
+
     return 0;
 }
