@@ -1,41 +1,44 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #define ll long long
 #define N 100005
-#define M 10000007
-#define O 1000000009
-#define vll vector<long long>
+#define M 10000005
+#define O 1000000007
+#define vi vector<int>
 #define vl vector<long>
-#define dis(n) cout<<n<<endl
-#define fo(i,N) for(int i=0; i<N; ++i)
-#define fos(i,b,N) for(int i=b; i<N; ++i)
-#define forr(i,N) for(i=N; i>=0; --i)
+#define vb vector<bool>
+#define vll vector<long long>
+#define pii pair<int, int>
+#define pll pair<long, long>
+#define fo(i, N) for (long i = 0; i < N; ++i)
+#define fos(i, b, N) for (long i = b; i < N; ++i)
+#define forr(i, N) for (long i = N; i >= 0; --i)
+const double PI = 3.141592653589793238;
+#define fast                          \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);
 
 using namespace std;
 
 int main()
 {
+    fast;
     long n;
     cin >> n;
     vl a(n);
     fo(i, n) cin >> a[i];
 
-    multiset<pair<long, long>, less<pair<long, long>>> arr;
+    stack<pll> s;
 
-    for(long i = 0; i < n; ++i) {
-        arr.insert(make_pair(a[i], i + 1));
-        auto it = arr.lower_bound(make_pair(a[i], i + 1));
+    for (long i = 0; i < n; ++i)
+    {
+        while (!s.empty() && s.top().first >= a[i])
+            s.pop();
 
-        if(it != arr.begin()) {
-            --it;
-            cout << (*it).second << " ";
-        }
-        else
+        if (s.empty())
             cout << "0 ";
-        
-        for(auto itr = arr.begin(); itr != arr.end(); ++itr)
-            cout << (*itr).first << "-" << (*itr).second << " ";
-        cout << endl;
+        else
+            cout << s.top().second + 1 << " ";
+        s.push(make_pair(a[i], i));
     }
-
     return 0;
 }

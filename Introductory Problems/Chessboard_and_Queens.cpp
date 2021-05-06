@@ -18,29 +18,35 @@ const double PI = 3.141592653589793238;
     cin.tie(NULL);
 
 using namespace std;
+int ans = 0;
+string board[8];
+vb cols(8, false), ldiag(16, false), rdiag(16, false);
+
+void calculate(int r)
+{
+    if (r == 8)
+    {
+        ans++;
+        return;
+    }
+    for (int i = 0; i < 8; ++i)
+    {
+        if (board[r][i] == '.')
+        {
+            if (!cols[i] && !ldiag[r + i] && !rdiag[r - i + 7])
+            {
+                cols[i] = ldiag[r + i] = rdiag[r - i + 7] = true;
+                calculate(r + 1);
+                cols[i] = ldiag[r + i] = rdiag[r - i + 7] = false;
+            }
+        }
+    }
+}
 
 int main()
 {
-    fast;
-    long a, b;
-    cin >> a >> b;
-    
-    vector<vl> dp(a + 1);
-    fo(i, a + 1) dp[i].resize(b + 1, 0);
-
-    for(long i = 1; i <= a; ++i) {
-        for(long j = 1; j <= b; ++j) {
-            if(i == j)
-                continue;
-            long mini = INT_MAX;
-            for(long k = 1; k < i; ++k)
-                mini = min(mini, dp[k][j] + dp[i - k][j] + 1);
-            for(long k = 1; k < j; ++k)
-                mini = min(mini, dp[i][k] + dp[i][j - k] + 1);
-            dp[i][j] = mini;
-        }
-    }
-
-    cout << dp[a][b];
+    fo(i, 8) cin >> board[i];
+    calculate(0);
+    cout << ans;
     return 0;
 }

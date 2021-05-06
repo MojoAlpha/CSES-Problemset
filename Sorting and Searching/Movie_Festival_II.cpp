@@ -9,6 +9,7 @@
 #define vll vector<long long>
 #define pii pair<int, int>
 #define pll pair<long, long>
+#define plll pair<ll, ll>
 #define fo(i, N) for (long i = 0; i < N; ++i)
 #define fos(i, b, N) for (long i = b; i < N; ++i)
 #define forr(i, N) for (long i = N; i >= 0; --i)
@@ -21,26 +22,25 @@ using namespace std;
 
 int main()
 {
-    fast;
-    long a, b;
-    cin >> a >> b;
-    
-    vector<vl> dp(a + 1);
-    fo(i, a + 1) dp[i].resize(b + 1, 0);
+    ll n, k, res = 0;
+    cin >> n >> k;
+    vector<plll> a(n);
+    fo(i, n) cin >> a[i].second >> a[i].first;
+    sort(a.begin(), a.end());
 
-    for(long i = 1; i <= a; ++i) {
-        for(long j = 1; j <= b; ++j) {
-            if(i == j)
-                continue;
-            long mini = INT_MAX;
-            for(long k = 1; k < i; ++k)
-                mini = min(mini, dp[k][j] + dp[i - k][j] + 1);
-            for(long k = 1; k < j; ++k)
-                mini = min(mini, dp[i][k] + dp[i][j - k] + 1);
-            dp[i][j] = mini;
-        }
+    multiset<ll> end_time;
+    fo(i, k) end_time.insert(0);
+
+    for (long i = 0; i < n; ++i)
+    {
+        auto it = end_time.upper_bound(a[i].second);
+        if (it == end_time.begin())
+            continue;
+
+        end_time.erase(--it);
+        end_time.insert(a[i].first);
+        ++res;
     }
-
-    cout << dp[a][b];
+    cout << res;
     return 0;
 }

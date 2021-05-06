@@ -14,28 +14,21 @@ using namespace std;
 int main()
 {
     ll n, x;
-    cin >> n >> x;
+    cin >> n;
     vll a(n);
     fo(i, n) cin >> a[i];
 
-    ll tsum = 0, i = 0, res = 0, j = 0;
-    while (i < n && tsum < x)
-        tsum += a[i++];
+    ll res = 0;
+    ll prefix_sum = 0;
+    map<ll, ll> mods;
+    mods[0] = 1;
 
-    if (tsum == x)
-        res++;
-
-    while (i <= n)
+    for (ll num : a)
     {
-        if (tsum < x)
-            tsum += a[i++];
-        else
-            tsum -= a[j++];
-
-        if (tsum == x)
-            res++;
+        prefix_sum += num;
+        res += mods[prefix_sum % n];
+        mods[prefix_sum % n]++;
     }
-
-    cout << res;
+    cout << res << endl;
     return 0;
 }

@@ -17,27 +17,16 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     long n, x;
-    vl hash(1000001, 0);
-    cin >> n;
-    while (n--)
-    {
-        cin >> x;
-        if (hash[x] != 0)
-        {
-            cout << hash[x] << endl;
-            continue;
-        }
-        long res = 0, lim = floor(sqrt(x));
+    
+    vl dp(1000001, 0);
+    for(long i = 1; i <= 1000000; ++i)
+        for(long j = i; j <= 1000000; j += i)
+            dp[j]++;
 
-        for (long i = 1; i <= lim; ++i)
-        {
-            if (x % i == 0)
-                res += 2;
-            if (i * i == x)
-                res--;
-        }
-        hash[x] = res;
-        cout << res << endl;
+    cin >> n;
+    for(long i = 0; i < n; ++i) {
+        cin >> x;
+        cout << dp[x] << endl;
     }
     return 0;
 }

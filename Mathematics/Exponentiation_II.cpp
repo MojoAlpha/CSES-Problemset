@@ -12,19 +12,19 @@
 
 using namespace std;
 
-ll exponent(ll a, ll b)
+ll exponent(ll a, ll b, ll mod)
 {
     ll res = 1, fac = a;
     while (b)
     {
         if (b % 2 == 1)
         {
-            res = (res * fac) % O;
+            res = (res * fac) % mod;
             b--;
             continue;
         }
 
-        fac = (fac * fac) % O;
+        fac = (fac * fac) % mod;
         b /= 2;
     }
 
@@ -40,8 +40,8 @@ int main()
         ll a, b, c;
         cin >> a >> b >> c;
 
-        ll p = exponent(b, c);
-        ll res = exponent(a, p);
+        ll p = exponent(b, c, O -1);    //Fermat's Little Theorem
+        ll res = exponent(a, p, O);
 
         cout << res << endl;
     }

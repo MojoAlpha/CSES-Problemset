@@ -19,28 +19,36 @@ const double PI = 3.141592653589793238;
 
 using namespace std;
 
+vector<vll> dp;
+long n;
+
+ll getVal(long x, long y) {
+    if(x > n || y > n)
+        return 0;
+    return dp[x][y];
+}
+
 int main()
 {
     fast;
-    long a, b;
-    cin >> a >> b;
-    
-    vector<vl> dp(a + 1);
-    fo(i, a + 1) dp[i].resize(b + 1, 0);
+    cin >> n;
+    vl a(n);
+    fo(i, n) cin >> a[i];
 
-    for(long i = 1; i <= a; ++i) {
-        for(long j = 1; j <= b; ++j) {
+    dp.resize(n + 1);
+    fo(i, n + 1) dp[i].resize(n + 1, 0);
+
+    for(long i = n; i > 0; --i) {
+        for(long j = i; j <= n; ++j) {
             if(i == j)
-                continue;
-            long mini = INT_MAX;
-            for(long k = 1; k < i; ++k)
-                mini = min(mini, dp[k][j] + dp[i - k][j] + 1);
-            for(long k = 1; k < j; ++k)
-                mini = min(mini, dp[i][k] + dp[i][j - k] + 1);
-            dp[i][j] = mini;
+                dp[i][j] = a[i - 1];
+            else {
+                dp[i][j] = max({ getVal(i + 1, j - 1) + a[i - 1], getVal(i + 1, j - 1) + a[j - 1], getVal(i + 2, j) + a[i - 1], getVal(i, j - 2) + a[j - 1] });
+            }
         }
     }
 
-    cout << dp[a][b];
+    cout << dp[1][n];
+
     return 0;
 }

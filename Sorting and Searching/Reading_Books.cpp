@@ -21,26 +21,20 @@ using namespace std;
 
 int main()
 {
-    fast;
-    long a, b;
-    cin >> a >> b;
-    
-    vector<vl> dp(a + 1);
-    fo(i, a + 1) dp[i].resize(b + 1, 0);
-
-    for(long i = 1; i <= a; ++i) {
-        for(long j = 1; j <= b; ++j) {
-            if(i == j)
-                continue;
-            long mini = INT_MAX;
-            for(long k = 1; k < i; ++k)
-                mini = min(mini, dp[k][j] + dp[i - k][j] + 1);
-            for(long k = 1; k < j; ++k)
-                mini = min(mini, dp[i][k] + dp[i][j - k] + 1);
-            dp[i][j] = mini;
-        }
+    ll n;
+    cin >> n;
+    vll a(n);
+    fo(i, n) cin >> a[i];
+    ll asum = 0, amax = 0;
+    fo(i, n)
+    {
+        asum += a[i];
+        amax = max(amax, a[i]);
     }
-
-    cout << dp[a][b];
+    if (amax >= asum - amax)
+        cout << 2 * amax;
+    else
+        cout << asum;
+    cout << endl;
     return 0;
 }

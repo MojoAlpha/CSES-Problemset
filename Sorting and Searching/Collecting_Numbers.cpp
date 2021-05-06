@@ -11,33 +11,40 @@
 #define forr(i,N) for(i=N; i>=0; --i)
  
 using namespace std;
+
+long checkCase(vl a, long ind) {
+    long n = a.size(), res = 0;
+    if(ind - 1 >= 0 && a[ind] < a[ind - 1])
+        res++;
+    if(ind + 1 < n && a[ind] > a[ind + 1])
+        res++;
+    return res;
+}
+
 int main()
 {
-    long n;
-    cin >> n;
+    long n, m;
+    cin >> n >> m;
     vl a(n);
     fo(i, n) cin >> a[i];
 
-    ll res = 0;
-    set<long> s;
-    for(long i = 0; i < n; ++i) {
-        s.insert(a[i]);
-        auto it = s.lower_bound(a[i]);
-        if(it == s.begin()) {
-            res++;
-        }
-        else {
-            s.erase(--it);
-            s.insert(a[i]);
-        }
+    vl b(n);
+    fo(i, n) b[a[i] - 1] = i;
+    long res = 1;
 
-        // auto itm = s.begin();
-        // while(itm != s.end()) {
-        //     cout << *itm << " ";
-        //     ++itm;
-        // }
-        // cout << endl;
+    for(long i = 1; i < n; ++i)
+        if(b[i] < b[i - 1])
+            res++;
+    
+    for(long i = 0; i < m; ++i) {
+        long x, y;
+        cin >> x >> y;
+        long prev = checkCase(a, x - 1) + checkCase(a, y - 1);
+        swap(a[x - 1], a[y - 1]);
+        long curr = checkCase(a, x - 1) + checkCase(a, y - 1);
+        res += curr - prev;
+        cout << res << endl;
     }
-    cout << s.size();
+
     return 0;
 }
