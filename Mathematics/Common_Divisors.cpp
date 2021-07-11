@@ -13,41 +13,37 @@
 #define fos(i, b, N) for (long i = b; i < N; ++i)
 #define forr(i, N) for (long i = N; i >= 0; --i)
 const double PI = 3.141592653589793238;
+const ll oo = 1e18;
 #define fast                          \
     ios_base::sync_with_stdio(false); \
     cin.tie(NULL);
 
 using namespace std;
 
+vll cnt(1000000, 0);
+
 int main()
 {
-    fast;
-    string a, b;
-    cin >> a >> b;
-    int n = a.size(), m = b.size();
-
-    vector<vi> dp(n + 1, vi(m + 1, 0));
-    for (int i = 0; i <= n; ++i)
+    long n;
+    cin >> n;
+    vl a(n);
+    fo(i, n)
     {
-        for (int j = 0; j <= m; ++j)
-        {
-            if (i == 0)
-            {
-                dp[i][j] = j;
-                continue;
-            }
-            if (j == 0)
-            {
-                dp[i][j] = i;
-                continue;
-            }
+        cin >> a[i];
+        cnt[a[i]]++;
+    }
 
-            if (a[i - 1] == b[j - 1])
-                dp[i][j] = dp[i - 1][j - 1];
-            else
-                dp[i][j] = 1 + min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]});
+    for (long i = 1000000; i >= 1; --i)
+    {
+        ll d = 0;
+        for (long j = i; j <= 1000000; j += i)
+            d += cnt[j];
+        if (d >= 2)
+        {
+            cout << i;
+            return 0;
         }
     }
-    cout << dp[n][m];
+
     return 0;
 }

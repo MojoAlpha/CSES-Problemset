@@ -20,24 +20,35 @@ const ll oo = 1e18;
 
 using namespace std;
 
+bool isLeft(ll x1, ll y1, ll x2, ll y2, ll x3, ll y3)
+{
+    return ((y2 - y1) * (x3 - x1) - (y3 - y1) * (x2 - x1)) < 0;
+}
+
+bool isRight(ll x1, ll y1, ll x2, ll y2, ll x3, ll y3)
+{
+    return ((y2 - y1) * (x3 - x1) - (y3 - y1) * (x2 - x1)) > 0;
+}
+
+void solve()
+{
+    ll x1, x2, x3, y1, y2, y3;
+    cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+
+    if (isLeft(x1, y1, x2, y2, x3, y3))
+        cout << "LEFT\n";
+    else if (isRight(x1, y1, x2, y2, x3, y3))
+        cout << "RIGHT\n";
+    else
+        cout << "TOUCH\n";
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    long t;
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }

@@ -9,9 +9,8 @@
 #define vll vector<long long>
 #define pii pair<int, int>
 #define pll pair<long, long>
-#define fo(i, N) for (long i = 0; i < N; ++i)
-#define fos(i, b, N) for (long i = b; i < N; ++i)
-#define forr(i, N) for (long i = N; i >= 0; --i)
+#define plll pair<long long, long long>
+#define fo(i, b, n) for (ll i = b; i < n; ++i)
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 #define fast                          \
@@ -20,24 +19,28 @@ const ll oo = 1e18;
 
 using namespace std;
 
+void solve()
+{
+    string s;
+    ll n, k;
+    cin >> n >> k;
+    vll v(n, 0);
+    fo(i, 0, n)
+    {
+        cin >> s;
+        reverse(s.begin(), s.end());
+        fo(j, 0, k) v[i] += (s[j] == '1') * (1 << j);
+    }
+    ll ans = 32;
+    fo(i, 0, n)
+        fo(j, i + 1, n)
+            ans = min(ans, (ll)__builtin_popcount(v[i] ^ v[j]));
+    cout << ans;
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    solve();
     return 0;
 }

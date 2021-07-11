@@ -22,34 +22,31 @@ using namespace std;
 long n, m, a, b;
 vector<vl> adj;
 bool f = true;
-vb vis;
-vl order, par;
+vi vis;
+stack<long> st;
 
 void dfs(long n)
 {
-    vis[n] = true;
-    for (long i = 0; f && i < adj[n].size(); ++i)
+    vis[n] = 1;
+    for (auto edge : adj[n])
     {
-        if (!vis[adj[n][i]])
-        {
-            par[adj[n][i]] = n;
-            dfs(adj[n][i]);
-        }
-        else if (par[adj[n][i]] == n)
+        if (vis[edge] == 0)
+            dfs(edge);
+        else if (vis[edge] == 1)
         {
             f = false;
             return;
         }
     }
-    order.push_back(n);
+    st.push(n);
+    vis[n] = 2;
 }
 
 void topological_sort()
 {
-    order.clear();
     for (long i = 1; f && i <= n; ++i)
     {
-        if (!vis[i])
+        if (vis[i] == 0)
             dfs(i);
     }
 
@@ -58,17 +55,19 @@ void topological_sort()
         cout << "IMPOSSIBLE\n";
         return;
     }
-    reverse(order.begin(), order.end());
-    for (long i = 0; i < order.size(); ++i)
-        cout << order[i] << " ";
+    while (!st.empty())
+    {
+        cout << st.top() << " ";
+        st.pop();
+    }
 }
 
 int main()
 {
+    fast;
     cin >> n >> m;
     adj.resize(n + 1);
-    vis.resize(n + 1, false);
-    par.resize(n + 1, -1);
+    vis.resize(n + 1, 0);
 
     for (long i = 0; i < m; ++i)
     {

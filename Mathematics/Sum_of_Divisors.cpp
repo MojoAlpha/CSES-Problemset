@@ -22,22 +22,10 @@ using namespace std;
 
 int main()
 {
-    fast;
-    ll n, ps = 0;
+    ll n;
     cin >> n;
-    vll a(n);
-    a[ps] = 1;
 
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    cout << modSums(n) << endl;
+    cout << n * n - modSums(n);
     return 0;
 }

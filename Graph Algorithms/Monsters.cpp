@@ -20,7 +20,7 @@ const ll oo = 1e18;
 
 using namespace std;
 
-vector<vll> gr;
+vector<vl> gr;
 vector<vector<pll>> from;
 queue<pll> q;
 pll A;
@@ -47,6 +47,9 @@ void retrace(pll node)
 
 void check(pll o, pll d)
 {
+    if (d.first < 0 || d.first > n - 1 || d.second < 0 || d.second > m - 1)
+        return;
+
     long pl = gr[o.first][o.second];
     if (pl + 1 < gr[d.first][d.second])
     {
@@ -117,18 +120,19 @@ int main()
                 A.second = j;
             }
         }
-        bfs();
-        mons = true;
-        from[A.first][A.second] = pii(-1, -1);
-        gr[A.first][A.second] = 0;
-        q.push(A);
-        bfs();
-        if (possible)
-        {
-            reverse(ans.begin(), ans.end());
-            cout << ans << endl;
-        }
-        else
-            cout << "NO\n";
     }
+
+    bfs();
+    mons = true;
+    from[A.first][A.second] = pll(-1, -1);
+    gr[A.first][A.second] = 0;
+    q.push(A);
+    bfs();
+    if (possible)
+    {
+        reverse(ans.begin(), ans.end());
+        cout << ans << endl;
+    }
+    else
+        cout << "NO\n";
 }

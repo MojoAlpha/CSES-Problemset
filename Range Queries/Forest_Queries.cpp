@@ -20,24 +20,33 @@ const ll oo = 1e18;
 
 using namespace std;
 
+void solve()
+{
+    long n, q;
+    cin >> n >> q;
+    vector<string> frst(n);
+    fo(i, n) cin >> frst[i];
+    vector<vi> dp(n + 1, vi(n + 1, 0));
+
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+        {
+            if (frst[i - 1][j - 1] == '*')
+                dp[i][j]++;
+            dp[i][j] += (dp[i - 1][j] + dp[i][j - 1] - dp[i - 1][j - 1]);
+        }
+
+    while (q--)
+    {
+        long x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        cout << dp[x2][y2] - dp[x1 - 1][y2] - dp[x2][y1 - 1] + dp[x1 - 1][y1 - 1] << endl;
+    }
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    solve();
     return 0;
 }

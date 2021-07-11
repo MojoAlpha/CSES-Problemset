@@ -23,21 +23,17 @@ using namespace std;
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
+    long n, q;
+    cin >> n >> q;
     vll a(n);
-    a[ps] = 1;
+    fo(i, n) cin >> a[i];
+    fos(i, 1, n) a[i] += a[i - 1];
 
-    for (long i = 0; i < n; ++i)
+    while (q--)
     {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
+        long l, r;
+        cin >> l >> r;
+        cout << a[r - 1] - (l < 2 ? 0 : a[l - 2]) << endl;
     }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
     return 0;
 }

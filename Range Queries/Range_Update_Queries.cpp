@@ -20,24 +20,43 @@ const ll oo = 1e18;
 
 using namespace std;
 
+ll n, q;
+vll lazy(4 * N, 0);
+vll x(2 * N);
+
+void updateLazy(ll start, ll end, ll lo, ll hi, ll k, ll pos)
+{
+    if (lo > hi)
+        return;
+
+    if (lazy[pos] != 0)
+    {
+    }
+}
+
+void solve()
+{
+    ll a, b, k, t;
+    cin >> n >> q;
+    fo(i, n) cin >> x[i];
+    while (q--)
+    {
+        cin >> t;
+        if (t == 2)
+        {
+            cin >> k;
+            cout << x[k - 1] << " ";
+        }
+        else
+        {
+            cin >> a >> b >> k;
+        }
+    }
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    solve();
     return 0;
 }

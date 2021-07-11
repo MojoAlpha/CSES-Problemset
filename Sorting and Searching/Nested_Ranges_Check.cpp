@@ -33,19 +33,32 @@ const ll oo = 1e18;
 
 void solution()
 {
-    long n;
+    ll n;
     cin >> n;
-    vl a(n);
-    fo(i, 0, n) cin >> a[i];
+    vector<pair<pll, long>> a(n);
+    fo(i, 0, n)
+    {
+        cin >> a[i].fi.se >> a[i].fi.fi;
+        a[i].se = i;
+    }
+    sort(all(a));
+    vl ar1(n, 0), ar2(n, 0);
 
-    vl b(n);
-    fo(i, 0, n) b[a[i] - 1] = i;
-    long res = 0;
-
-    for (long i = 1; i < n; ++i)
-        if (b[i] < b[i - 1])
-            res++;
-    cout << res + 1;
+    long i = 0, j = 1;
+    while (j < n)
+    {
+        if (a[i].fi.se >= a[j].fi.se)
+        {
+            ar1[a[i].se] = 1;
+            ar2[a[j].se] = 1;
+        }
+        else
+            i = j;
+        ++j;
+    }
+    fo(i, 0, n) cout << ar1[i] << " ";
+    cout << endl;
+    fo(i, 0, n) cout << ar2[i] << " ";
 }
 
 signed main()

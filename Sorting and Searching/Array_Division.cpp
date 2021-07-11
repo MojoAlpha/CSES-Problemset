@@ -31,21 +31,11 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
+ll n, k;
+
 void solution()
 {
-    long n;
-    cin >> n;
-    vl a(n);
-    fo(i, 0, n) cin >> a[i];
-
-    vl b(n);
-    fo(i, 0, n) b[a[i] - 1] = i;
-    long res = 0;
-
-    for (long i = 1; i < n; ++i)
-        if (b[i] < b[i - 1])
-            res++;
-    cout << res + 1;
+    cin >> n >> k;
 }
 
 signed main()

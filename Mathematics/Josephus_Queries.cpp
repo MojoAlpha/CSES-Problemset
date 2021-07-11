@@ -20,24 +20,36 @@ const ll oo = 1e18;
 
 using namespace std;
 
+long joshephusFunc(long n, long k)
+{
+    if (n == 1)
+        return 1;
+    if (k <= (n + 1) / 2)
+    {
+        if (2 * k > n)
+            return (2 * k) % n;
+        else
+            return 2 * k;
+    }
+    long tmp = joshephusFunc(n / 2, k - (n + 1) / 2);
+    if (n & 1)
+        return 2 * tmp + 1;
+    return 2 * tmp - 1;
+}
+
+void solve()
+{
+    long n, k;
+    cin >> n >> k;
+    cout << joshephusFunc(n, k) << endl;
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    long t;
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }

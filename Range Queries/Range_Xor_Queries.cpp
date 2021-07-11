@@ -20,24 +20,27 @@ const ll oo = 1e18;
 
 using namespace std;
 
+void solve()
+{
+    ll n, q, x, l, r;
+    cin >> n >> q;
+    vll xors(n + 1, 0);
+    fo(i, n)
+    {
+        cin >> x;
+        xors[i + 1] = xors[i] ^ x;
+    }
+
+    while (q--)
+    {
+        cin >> l >> r;
+        cout << (xors[r] ^ xors[l - 1]) << endl;
+    }
+}
+
 int main()
 {
     fast;
-    ll n, ps = 0;
-    cin >> n;
-    vll a(n);
-    a[ps] = 1;
-
-    for (long i = 0; i < n; ++i)
-    {
-        ll t;
-        cin >> t;
-        ps += t;
-        a[(ps % n + n) % n]++;
-    }
-    ll ans = 0;
-    for (ll x : a)
-        ans += x * (x - 1) / 2;
-    cout << ans;
+    solve();
     return 0;
 }

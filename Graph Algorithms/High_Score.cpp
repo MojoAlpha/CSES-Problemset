@@ -21,57 +21,33 @@ const double PI = 3.141592653589793238;
 
 using namespace std;
 
-struct edge
-{
-    ll a, b, points;
-};
+// negate the weights & then the problem turns
+// into a standard bellmon ford shortest path algorithm
 
-vector<edge> e;
 ll n, m;
-vll dist;
-
-void bford()
+vector<vll> edg(5005, vll(3));
+vll dist(2505, oo);
+vb vis1(2505, false), vis2(2505, false);
+void dfs1(long s)
 {
-    dist.resize(n + 1, oo);
-    dist[1] = 0;
-    for (;;)
-    {
-        bool any_changes = false;
-
-        for (long j = 0; j < m; ++j)
-        {
-            if (dist[e[j].a] < oo)
-            {
-                if (dist[e[j].b] > dist[e[j].a] + e[j].points)
-                {
-                    dist[e[j].b] = dist[e[j].a] + e[j].points;
-                    any_changes = true;
-                }
-            }
-        }
-        if (!any_changes)
-            break;
-    }
+    if (vis1[s])
+        return;
+    vis1[s] = 1;
+    for (auto i : ed)
 }
 
 int main()
 {
-    ll n, m;
+    fast;
     cin >> n >> m;
 
     for (long i = 0; i < m; ++i)
     {
-        edge tmp;
-        cin >> tmp.a >> tmp.b >> tmp.points;
-        e.push_back(tmp);
+        cin >> edg[i][0] >> edg[i][1] >> edg[i][2];
+        edg[i][2] *= -1;
     }
 
-    bford();
-
-    if (dist[n] == oo)
-        cout << "-1";
-    else
-        cout << dist[n];
+    dist[1] = 0;
 
     return 0;
 }

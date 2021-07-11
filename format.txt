@@ -20,7 +20,17 @@ const ll oo = 1e18;
 
 using namespace std;
 
+void solve() 
+{
+    
+}
+
 int main()
 {
+    fast;
+    long t;
+    cin >> t;
+    while(t--)
+        solve();
     return 0;
 }

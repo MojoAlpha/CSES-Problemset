@@ -1,120 +1,153 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define N 100005
-#define M 10000005
-#define O 1000000007
-#define vi vector<int>
-#define vl vector<long>
-#define vb vector<bool>
-#define vll vector<long long>
-#define pii pair<int, int>
-#define pll pair<long, long>
-#define fo(i, N) for (long i = 0; i < N; ++i)
-#define fos(i, b, N) for (long i = b; i < N; ++i)
-#define forr(i, N) for (long i = N; i >= 0; --i)
-const double PI = 3.141592653589793238;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);
-
+#define lli long long int
+#define li long int
+#define ld long double
 using namespace std;
+const lli mod = 1e9 + 7;
+const int n = 7;
+bool visited[n][n];
+int reserved[49];
 
-string s;
-ll ans;
-bool board[7][7];
-
-void calcPaths(int pos, int x, int y, int m, int n)
+void move(int r, int c, int &ans, int &steps)
 {
-    if (pos == 48 && x == m && y == n)
+    if (r == n - 1 && c == 0)
     {
-        ans++;
+        ans += (steps == n * n - 1);
         return;
     }
-    if (pos == 48)
+
+    // if you hit a wall or a path (can only go left or right); return
+    if (((r + 1 == n || (visited[r - 1][c] && visited[r + 1][c])) && c - 1 >= 0 && c + 1 < n && !visited[r][c - 1] && !visited[r][c + 1]) ||
+        ((c + 1 == n || (visited[r][c - 1] && visited[r][c + 1])) && r - 1 >= 0 && r + 1 < n && !visited[r - 1][c] && !visited[r + 1][c]) ||
+        ((r == 0 || (visited[r + 1][c] && visited[r - 1][c])) && c - 1 >= 0 && c + 1 < n && !visited[r][c - 1] && !visited[r][c + 1]) ||
+        ((c == 0 || (visited[r][c + 1] && visited[r][c - 1])) && r - 1 >= 0 && r + 1 < n && !visited[r - 1][c] && !visited[r + 1][c]))
         return;
 
-    if (((x + 1 == n || (board[x + 1][y] && board[x - 1][y])) && y - 1 >= 0 && y + 1 < 7 && !board[x][y - 1] && !board[x][y + 1]) ||
-        ((y + 1 == n || (board[x][y - 1] && board[x][y + 1])) && x - 1 >= 0 && x + 1 < n && !board[x - 1][y] && !board[x + 1][y]) ||
-        ((x == 0 || (board[x + 1][y] && board[x - 1][y])) && y - 1 >= 0 && y + 1 < n && !board[x][y - 1] && !board[x][y + 1]) ||
-        ((y == 0 || (board[x][y + 1] && board[x][y - 1])) && x - 1 >= 0 && x + 1 < n && !board[x - 1][y] && !board[x + 1][y]))
-        return;
+    visited[r][c] = true;
 
-    if (s[pos] != '?')
+    if (reserved[steps] != -1)
     {
-        switch (s[pos])
+        switch (reserved[steps])
         {
-        case 'L':
-            if (x - 1 >= 0 && !board[x - 1][y])
+        case 0:
+            if (r - 1 >= 0)
             {
-                board[x - 1][y] = true;
-                calcPaths(pos + 1, x - 1, y, m, n);
-                board[x - 1][y] = false;
+                if (!visited[r - 1][c])
+                {
+                    steps++;
+                    move(r - 1, c, ans, steps);
+                    steps--;
+                }
             }
             break;
-        case 'R':
-            if (x + 1 < 7 && !board[x + 1][y])
+
+        case 1:
+            if (c + 1 < n)
             {
-                board[x + 1][y] = true;
-                calcPaths(pos + 1, x + 1, y, m, n);
-                board[x + 1][y] = false;
+                if (!visited[r][c + 1])
+                {
+                    steps++;
+                    move(r, c + 1, ans, steps);
+                    steps--;
+                }
             }
             break;
-        case 'U':
-            if (y - 1 >= 0 && !board[x][y - 1])
+
+        case 2:
+            if (r + 1 < n)
             {
-                board[x][y - 1] = true;
-                calcPaths(pos + 1, x, y - 1, m, n);
-                board[x][y - 1] = false;
+                if (!visited[r + 1][c])
+                {
+                    steps++;
+                    move(r + 1, c, ans, steps);
+                    steps--;
+                }
             }
             break;
-        case 'D':
-            if (y + 1 < 7 && !board[x][y + 1])
+
+        case 3:
+            if (c - 1 >= 0)
             {
-                board[x][y + 1] = true;
-                calcPaths(pos + 1, x, y + 1, m, n);
-                board[x][y + 1] = false;
+                if (!visited[r][c - 1])
+                {
+                    steps++;
+                    move(r, c - 1, ans, steps);
+                    steps--;
+                }
             }
             break;
+        }
+        visited[r][c] = false;
+        return;
+    }
+
+    // move down
+    if (r + 1 < n)
+    {
+        if (!visited[r + 1][c])
+        {
+            steps++;
+            move(r + 1, c, ans, steps);
+            steps--;
         }
     }
-    else
+
+    // move right
+    if (c + 1 < n)
     {
-        if (x + 1 < 7 && !board[x + 1][y])
+        if (!visited[r][c + 1])
         {
-            board[x + 1][y] = true;
-            calcPaths(pos + 1, x + 1, y, m, n);
-            board[x + 1][y] = false;
-        }
-        if (x - 1 >= 0 && !board[x - 1][y])
-        {
-            board[x - 1][y] = true;
-            calcPaths(pos + 1, x - 1, y, m, n);
-            board[x - 1][y] = false;
-        }
-        if (y - 1 >= 0 && !board[x][y - 1])
-        {
-            board[x][y - 1] = true;
-            calcPaths(pos + 1, x, y - 1, m, n);
-            board[x][y - 1] = false;
-        }
-        if (y + 1 < 7 && !board[x][y + 1])
-        {
-            board[x][y + 1] = true;
-            calcPaths(pos + 1, x, y + 1, m, n);
-            board[x][y + 1] = false;
+            steps++;
+            move(r, c + 1, ans, steps);
+            steps--;
         }
     }
+
+    // move up
+    if (r - 1 >= 0)
+    {
+        if (!visited[r - 1][c])
+        {
+            steps++;
+            move(r - 1, c, ans, steps);
+            steps--;
+        }
+    }
+
+    // move left
+    if (c - 1 >= 0)
+    {
+        if (!visited[r][c - 1])
+        {
+            steps++;
+            move(r, c - 1, ans, steps);
+            steps--;
+        }
+    }
+    visited[r][c] = false;
 }
 
 int main()
 {
-    cin >> s;
-    ans = 0;
-    fo(i, 7)
-        fo(j, 7)
-            board[i][j] = false;
-    board[0][0] = true;
-    calcPaths(0, 0, 0, 6, 0);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    string path;
+    cin >> path;
+    for (int i = 0; i < path.length(); i++)
+    {
+        if (path[i] == '?')
+            reserved[i] = -1;
+        else if (path[i] == 'U')
+            reserved[i] = 0;
+        else if (path[i] == 'R')
+            reserved[i] = 1;
+        else if (path[i] == 'D')
+            reserved[i] = 2;
+        else if (path[i] == 'L')
+            reserved[i] = 3;
+    }
+    int ans = 0, steps = 0;
+    move(0, 0, ans, steps);
     cout << ans;
     return 0;
 }
