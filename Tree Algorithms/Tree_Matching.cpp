@@ -31,47 +31,27 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
-
-bool divideGroups(ll val)
-{
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
-    }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
-}
+ll n;
+vl gr[2 * N];
+vvl edges;
 
 void solution()
 {
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
-
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
+    ll a, b, res = 0;
+    cin >> n;
+    fo(i, 0, n - 1)
     {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
-        {
-            hi = mid - 1;
-            ans = mid;
-        }
-        else
-            lo = mid + 1;
+        cin >> a >> b;
+        edges.pb({a, b});
+        gr[a].pb(b);
+        gr[b].pb(a);
     }
-    cout << ans << endl;
+    fo(i, 0, n - 1)
+    {
+        res += n;
+        res -= gr[edges[i][0]].size() + gr[edges[i][1]].size();
+    }
+    cout << res / 2;
 }
 
 signed main()

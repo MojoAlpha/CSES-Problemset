@@ -1,88 +1,100 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define N 100005
-#define M 10000005
-#define O 1000000007
-#define vi vector<int>
-#define vl vector<long>
-#define vb vector<bool>
-#define vll vector<long long>
-#define pii pair<int, int>
-#define pll pair<long, long>
-#define plll pair<long long, long long>
-#define fos(i, b, n) for (long i = b; i < n; ++i)
-const double PI = 3.141592653589793238;
-const ll oo = 1e18;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);
 
 using namespace std;
 
-vector<vl> adj(N);
-vl path;
-long n, m;
-vi vis(N, 0);
-bool found = false;
+#define N 100005
+#define MOD 1000000007
+#define fo(i, b, n) for (long i = b; i < n; ++i)
+#define rfo(i, b, n) for (long i = b; i >= n; --i)
+#define all(ar) ar.begin(), ar.end()
+#define rall(ar) ar.rbegin(), ar.rend()
+#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define fi first
+#define se second
+#define pb push_back
+#define fastIO                        \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);                    \
+    cout.precision(12);
+
+typedef long long ll;
+typedef pair<long, long> pll;
+typedef pair<ll, ll> plll;
+typedef vector<int> vi;
+typedef vector<long> vl;
+typedef vector<ll> vll;
+typedef vector<bool> vb;
+typedef vector<vb> vvb;
+typedef vector<vl> vvl;
+typedef vector<vll> vvll;
+
+const double PI = 3.141592653589793238;
+const ll oo = 1e18;
+
+ll n, m, a, b;
+vll adj[N], vis(N, 0), path;
+bool f;
 
 void printPath()
 {
-    long i = path.size() - 2, cnt = 1;
+    ll i = path.size() - 2, cnt = 1;
     while (i >= 0 && path[i] != path.back())
     {
         cnt++;
-        --i;
+        i--;
     }
     cout << cnt + 1 << endl;
     while (i < path.size())
         cout << path[i++] << " ";
 }
 
-void dfs(long s)
+void dfs(ll src)
 {
-    vis[s] = 1;
-    path.push_back(s);
-    for (auto i : adj[s])
+    if (!f)
+        return;
+    vis[src] = 1;
+    path.pb(src);
+
+    for (auto i : adj[src])
     {
+        if (!f)
+            return;
         if (vis[i] == 0)
             dfs(i);
         else if (vis[i] == 1)
         {
-            found = true;
-            path.push_back(i);
+            f = 0;
+            path.pb(i);
             printPath();
             return;
         }
     }
-    vis[s] = 2;
+    if (!f)
+        return;
+    vis[src] = 2;
+    path.pop_back();
 }
 
-void solve()
+signed main()
 {
-    long a, b;
+    fastIO;
+    f = 1;
     cin >> n >> m;
-    fos(i, 0, m)
+    fo(i, 0, m)
     {
         cin >> a >> b;
-        adj[a].push_back(b);
+        adj[a].pb(b);
     }
 
-    fos(i, 1, n + 1)
+    fo(i, 1, n + 1)
     {
         if (vis[i] == 0)
         {
             dfs(i);
-            if (found)
-                return;
-            path.clear();
+            if (!f)
+                return 0;
         }
     }
     cout << "IMPOSSIBLE";
-}
-
-int main()
-{
-    fast;
-    solve();
     return 0;
 }

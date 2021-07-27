@@ -31,47 +31,46 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
+ll mat[2][2] = {{1, 1}, {1, 0}};
+ll res[2][2] = {{1, 0}, {0, 1}};
 
-bool divideGroups(ll val)
+void multiply(ll a[2][2], ll b[2][2])
 {
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
+    ll tmp[2][2] = {{0, 0}, {0, 0}};
+    fo(i, 0, 2)
     {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
+        fo(j, 0, 2)
         {
-            ++grps;
-            sum = 0;
+            fo(k, 0, 2)
+                tmp[i][j] = (tmp[i][j] + a[i][k] * b[k][j]) % MOD;
         }
-        sum += a[i];
     }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
+
+    fo(i, 0, 2) fo(j, 0, 2) a[i][j] = tmp[i][j];
+}
+
+void binPow(ll n)
+{
+    while (n)
+    {
+        if (n & 1)
+            multiply(res, mat);
+        multiply(mat, mat);
+        n >>= 1;
+    }
 }
 
 void solution()
 {
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
-
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
+    ll n;
+    cin >> n;
+    if (n == 0)
+        cout << "0";
+    else
     {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
-        {
-            hi = mid - 1;
-            ans = mid;
-        }
-        else
-            lo = mid + 1;
+        binPow(n);
+        cout << res[0][1];
     }
-    cout << ans << endl;
 }
 
 signed main()

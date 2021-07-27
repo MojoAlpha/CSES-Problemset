@@ -1,58 +1,62 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define N 100005
-#define M 10000005
-#define O 1000000007
-#define vi vector<int>
-#define vl vector<long>
-#define vb vector<bool>
-#define vll vector<long long>
-#define pii pair<int, int>
-#define pll pair<long, long>
-#define fo(i, N) for (long i = 0; i < N; ++i)
-#define fos(i, b, N) for (long i = b; i < N; ++i)
-#define forr(i, N) for (long i = N; i >= 0; --i)
-const double PI = 3.141592653589793238;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);
 
 using namespace std;
 
-int main()
+#define N 100005
+#define MOD 1000000007
+#define fo(i, b, n) for (long i = b; i < n; ++i)
+#define rfo(i, b, n) for (long i = b; i >= n; --i)
+#define all(ar) ar.begin(), ar.end()
+#define rall(ar) ar.rbegin(), ar.rend()
+#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define fi first
+#define se second
+#define pb push_back
+#define fastIO                        \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);                    \
+    cout.precision(12);
+
+typedef long long ll;
+typedef pair<long, long> pll;
+typedef pair<ll, ll> plll;
+typedef vector<int> vi;
+typedef vector<long> vl;
+typedef vector<ll> vll;
+typedef vector<bool> vb;
+typedef vector<vb> vvb;
+typedef vector<vl> vvl;
+typedef vector<vll> vvll;
+
+const double PI = 3.141592653589793238;
+const ll oo = 1e18;
+
+void solution()
 {
-    ll n, a, b;
+    ll n, a, b, val;
     cin >> n >> a >> b;
-    vll x(n);
-    fo(i, n) cin >> x[i];
-
-    vll pre(n, 0);
-    pre[0] = x[0];
-    for (long i = 1; i < n; ++i)
-        pre[i] = pre[i - 1] + x[i];
-
-    multiset<ll> ms;
-    ms.insert(0);
-    ll ans = INT_MIN;
-    ans = max(ans, pre[a - 1]);
-    ll flag = 0;
-    for (long i = a; i < n; ++i)
+    vll pref(n + 1, 0);
+    fo(i, 1, n + 1)
     {
-        if (i - a >= 0 && flag == 0)
-        {
-            auto it = ms.find(0);
-            ms.erase(it);
-            flag = 1;
-        }
-        if (i - a >= 0)
-            ms.insert(pre[i - a]);
-        ans = max(ans, pre[i] - *ms.begin());
-        if (i - b >= 0)
-        {
-            auto it = ms.find(pre[i - b]);
-            ms.erase(it);
-        }
+        cin >> val;
+        pref[i] = pref[i - 1] + val;
     }
-    cout << ans;
+
+    multiset<ll> curr;
+    ll ans = -oo;
+    fo(i, a, n + 1)
+    {
+        if (i > b)
+            curr.erase(curr.find(pref[i - b - 1]));
+        curr.insert(pref[i - a]);
+        ans = max(ans, pref[i] - *curr.begin());
+    }
+    cout << ans << endl;
+}
+
+signed main()
+{
+    fastIO;
+    solution();
     return 0;
 }

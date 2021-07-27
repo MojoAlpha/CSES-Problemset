@@ -31,63 +31,71 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-ll n, m, u, v, w;
+ll n, m, a, b, dist[N], par[N];
+vll adj[N];
 
-void djikstra(vector<vector<pll>> &adj, vll &dist, long s)
+void djikstra(ll src)
 {
-    dist[s] = 0;
-    priority_queue<pll, vector<pll>, greater<pll>> pq;
-    pq.push({0, s});
+    dist[src] = 0;
+    priority_queue<plll, vector<plll>, greater<plll>> pq;
+    pq.push({0, src});
 
     while (!pq.empty())
     {
-        long v = pq.top().se, dv = pq.top().fi;
+        auto p = pq.top();
         pq.pop();
 
-        if (dv != dist[v])
+        if (dist[p.se] != p.fi)
             continue;
 
-        for (auto e : adj[v])
+        for (auto edge : adj[p.second])
         {
-            long to = e.fi, len = e.se;
-            if (dist[v] + len < dist[to])
+            if (dist[edge] > p.fi - 1)
             {
-                dist[to] = dist[v] + len;
-                pq.push({dist[to], to});
+                dist[edge] = p.fi - 1;
+                par[edge] = p.se;
+                pq.push({dist[edge], edge});
             }
         }
     }
 }
 
-void solution()
-{
-    cin >> n >> m;
-    vector<vector<pll>> adj1(n + 1), adj2(n + 1);
-    fo(i, 0, m)
-    {
-        cin >> u >> v >> w;
-        adj1[u].pb({v, w});
-        adj2[v].pb({u, w});
-    }
-
-    vll dist1(n + 1, oo), dist2(n + 1, oo);
-    djikstra(adj1, dist1, 1);
-    djikstra(adj2, dist2, n);
-
-    ll res = oo;
-    fo(i, 1, n + 1)
-    {
-        for (auto e : adj1[i])
-            res = min(res, dist1[i] + e.se / 2 + dist2[e.fi]);
-        for (auto e : adj2[i])
-            res = min(res, dist2[i] + e.se / 2 + dist1[e.fi]);
-    }
-    cout << res;
-}
-
-signed main()
+int main()
 {
     fastIO;
-    solution();
+
+    fo(i, 0, N)
+    {
+        par[i] = -1;
+        dist[i] = 1;
+    }
+
+    cin >> n >> m;
+    fo(i, 0, m)
+    {
+        cin >> a >> b;
+        adj[a].pb(b);
+    }
+    djikstra(1);
+
+    if (dist[n] >= 0)
+    {
+        printf("IMPOSSIBLE");
+        return 0;
+    }
+
+    ll i = n;
+    vll path;
+
+    while (par[i] != -1)
+    {
+        path.pb(i);
+        i = par[i];
+    }
+    path.pb(i);
+    cout << path.size() << endl;
+    reverse(all(path));
+    for (auto i : path)
+        printf("%lld ", i);
     return 0;
 }

@@ -28,55 +28,34 @@ typedef vector<vb> vvb;
 typedef vector<vl> vvl;
 typedef vector<vll> vvll;
 
+ll n, k, a[20], res = 0;
+
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
-
-bool divideGroups(ll val)
+ll countMultiples(ll i)
 {
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
-    }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
-}
+    ll num = 1;
+    fo(d, 0, k) if (i & (1 << d)) num *= a[d];
 
-void solution()
-{
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
-
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
-    {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
-        {
-            hi = mid - 1;
-            ans = mid;
-        }
-        else
-            lo = mid + 1;
-    }
-    cout << ans << endl;
+    return n / num;
 }
 
 signed main()
 {
     fastIO;
-    solution();
+    cin >> n >> k;
+    fo(i, 0, k) cin >> a[i];
+
+    ll hi = (1 << k);
+    fo(i, 1, hi)
+    {
+        if (__builtin_popcount(i) == 1)
+            res += countMultiples(i);
+        else
+            res -= countMultiples(i);
+    }
+
+    cout << res;
     return 0;
 }

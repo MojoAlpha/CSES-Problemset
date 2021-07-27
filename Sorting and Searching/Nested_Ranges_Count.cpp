@@ -67,20 +67,10 @@ void solution()
     }
 
     for (int x : ans1)
-    {
-        if (x > 0)
-            cout << "1 ";
-        else
-            cout << "0 ";
-    }
+        cout << x << " ";
     cout << endl;
     for (int x : ans2)
-    {
-        if (x > 0)
-            cout << "1 ";
-        else
-            cout << "0 ";
-    }
+        cout << x << " ";
     cout << endl;
 }
 

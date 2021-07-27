@@ -1,53 +1,90 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define N 100005
-#define M 10000005
-#define O 1000000007
-#define vi vector<int>
-#define vl vector<long>
-#define vb vector<bool>
-#define vll vector<long long>
-#define pii pair<int, int>
-#define pll pair<long, long>
-#define plll pair<long long, long long>
-#define fo(i, N) for (long i = 0; i < N; ++i)
-#define fos(i, b, N) for (long i = b; i < N; ++i)
-#define forr(i, N) for (long i = N; i >= 0; --i)
-const long long oo = 10e17;
-const double PI = 3.141592653589793238;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);
 
 using namespace std;
 
-// negate the weights & then the problem turns
-// into a standard bellmon ford shortest path algorithm
+#define N 100005
+#define MOD 1000000007
+#define fo(i, b, n) for (long i = b; i < n; ++i)
+#define rfo(i, b, n) for (long i = b; i >= n; --i)
+#define all(ar) ar.begin(), ar.end()
+#define rall(ar) ar.rbegin(), ar.rend()
+#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define fi first
+#define se second
+#define pb push_back
+#define fastIO                        \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);                    \
+    cout.precision(12);
 
-ll n, m;
-vector<vll> edg(5005, vll(3));
-vll dist(2505, oo);
-vb vis1(2505, false), vis2(2505, false);
-void dfs1(long s)
+typedef long long ll;
+typedef pair<long, long> pll;
+typedef pair<ll, ll> plll;
+typedef vector<int> vi;
+typedef vector<long> vl;
+typedef vector<ll> vll;
+typedef vector<bool> vb;
+typedef vector<vb> vvb;
+typedef vector<vl> vvl;
+typedef vector<vll> vvll;
+
+const double PI = 3.141592653589793238;
+const ll oo = 1e18;
+
+ll n, m, u, v, w;
+
+void dfs(vector<vector<int>> &adj, vb &vis, long s)
 {
-    if (vis1[s])
-        return;
-    vis1[s] = 1;
-    for (auto i : ed)
+    vis[s] = true;
+    for (auto i : adj[s])
+    {
+        if (!vis[i])
+            dfs(adj, vis, i);
+    }
 }
 
-int main()
+void solution()
 {
-    fast;
     cin >> n >> m;
-
-    for (long i = 0; i < m; ++i)
+    vector<vector<int>> adj1(n + 1), adj2(n + 1);
+    vector<tuple<ll, ll, ll>> e(m);
+    fo(i, 0, m)
     {
-        cin >> edg[i][0] >> edg[i][1] >> edg[i][2];
-        edg[i][2] *= -1;
+        cin >> u >> v >> w;
+        adj1[u].pb(v);
+        adj2[v].pb(u);
+        e[i] = {u, v, -w};
     }
+    vb vis1(n + 1), vis2(n + 1);
+    dfs(adj1, vis1, 1);
+    dfs(adj2, vis2, n);
 
+    vll dist(n + 1, oo);
     dist[1] = 0;
+    bool flag = 0;
 
+    fo(i, 0, n)
+    {
+        flag = 0;
+        for (auto x : e)
+        {
+            tie(u, v, w) = x;
+            if (vis1[u] && vis2[v] && dist[u] + w < dist[v])
+            {
+                flag = true;
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+    if (flag)
+        cout << "-1";
+    else
+        cout << -1 * dist[n];
+}
+
+signed main()
+{
+    fastIO;
+    solution();
     return 0;
 }

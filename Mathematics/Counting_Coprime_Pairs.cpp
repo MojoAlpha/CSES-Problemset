@@ -30,53 +30,38 @@ typedef vector<vll> vvll;
 
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
+const ll V = 10 * N;
 
-vll a(2 * N);
-ll n, k;
-
-bool divideGroups(ll val)
-{
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
-    }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
-}
-
-void solution()
-{
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
-
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
-    {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
-        {
-            hi = mid - 1;
-            ans = mid;
-        }
-        else
-            lo = mid + 1;
-    }
-    cout << ans << endl;
-}
+ll n, a[N];
+vl primes;
+int vis[V];
 
 signed main()
 {
     fastIO;
-    solution();
+
+    fo(i, 2, V)
+    {
+        if (!vis[i])
+        {
+            primes.pb(i);
+            for (ll j = i * i; j < V; j += i)
+                vis[j] = 1;
+        }
+    }
+
+    cin >> n;
+    fo(i, 0, n) cin >> a[i];
+    ll res = n * (n - 1) / 2, cnt = 0;
+
+    fo(i, 0, primes.size())
+    {
+        cnt = 0;
+        fo(j, 0, n) if (a[j] % primes[i] == 0) cnt++;
+
+        res -= (cnt * (cnt - 1) / 2);
+    }
+    cout << res;
+
     return 0;
 }

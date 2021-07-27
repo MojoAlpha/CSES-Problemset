@@ -31,52 +31,45 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
+ll n, m, a, b;
+vll adj[N], comb(N, 0);
 
-bool divideGroups(ll val)
+void bfs(ll src)
 {
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
-    }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
-}
+    queue<ll> q;
+    vi vis(n + 1, 0);
+    q.push(src);
+    vis[src];
+    comb[1] = 1;
 
-void solution()
-{
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
-
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
+    while (!q.empty())
     {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
+        ll p = q.front();
+        q.pop();
+
+        for (auto ed : adj[p])
         {
-            hi = mid - 1;
-            ans = mid;
+            if (vis[ed] != 2)
+            {
+                comb[ed] = (comb[ed] + comb[p]) % MOD;
+                if (vis[ed] == 0)
+                    q.push(ed);
+            }
         }
-        else
-            lo = mid + 1;
+        vis[p] = 2;
     }
-    cout << ans << endl;
 }
 
 signed main()
 {
     fastIO;
-    solution();
+    cin >> n >> m;
+    fo(i, 0, m)
+    {
+        cin >> a >> b;
+        adj[a].pb(b);
+    }
+    bfs(1);
+    cout << comb[n];
     return 0;
 }

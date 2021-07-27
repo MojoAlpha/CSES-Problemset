@@ -31,47 +31,54 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
+ll fact[10 * N];
 
-bool divideGroups(ll val)
+ll binPow(ll a, ll n)
 {
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
+    ll res = 1;
+    while (n)
     {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
+        if (n & 1)
+            res = (res * a) % MOD;
+        a = (a * a) % MOD;
+        n >>= 1;
     }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
+    return res;
 }
 
 void solution()
 {
-    cin >> n >> k;
-    fo(i, 0, n) cin >> a[i];
+    fact[0] = fact[1] = 1;
+    fo(i, 2, 10 * N) fact[i] = (fact[i - 1] * i) % MOD;
 
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
+    ll n, op = 0, cl = 0;
+    string s;
+    cin >> n >> s;
+    if (n & 1)
     {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
-        {
-            hi = mid - 1;
-            ans = mid;
-        }
-        else
-            lo = mid + 1;
+        cout << "0";
+        return;
     }
-    cout << ans << endl;
+
+    n /= 2;
+
+    for (char c : s)
+    {
+        if (c == '(')
+            op++;
+        else
+            cl++;
+        if (cl > op)
+        {
+            cout << "0";
+            return;
+        }
+    }
+
+    n -= min(op, cl);
+
+    ll den = (fact[n] * fact[n + 1]) % MOD;
+    cout << (fact[2 * n] * binPow(den, MOD - 2)) % MOD;
 }
 
 signed main()

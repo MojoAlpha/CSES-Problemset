@@ -31,47 +31,31 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-vll a(2 * N);
-ll n, k;
-
-bool divideGroups(ll val)
-{
-    int grps = 0;
-    ll sum = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        if (a[i] > val)
-            return false;
-        if (sum + a[i] > val)
-        {
-            ++grps;
-            sum = 0;
-        }
-        sum += a[i];
-    }
-    if (sum > 0)
-        grps++;
-    return (grps <= k);
-}
-
 void solution()
 {
-    cin >> n >> k;
+    ll n, x;
+    cin >> n >> x;
+    vll a(n);
     fo(i, 0, n) cin >> a[i];
+    priority_queue<ll> pq;
 
-    ll lo = 0, hi = oo, ans = 0;
-    while (lo <= hi)
+    fo(i, 0, n)
     {
-        ll mid = (lo + hi) / 2;
-        if (divideGroups(mid))
+        if (pq.empty())
         {
-            hi = mid - 1;
-            ans = mid;
+            pq.push(0);
+            continue;
+        }
+        if (pq.top() + a[i] <= x)
+        {
+            ll val = pq.top();
+            pq.pop();
+            pq.push(val + a[i]);
         }
         else
-            lo = mid + 1;
+            pq.push(a[i]);
     }
-    cout << ans << endl;
+    cout << pq.size();
 }
 
 signed main()
