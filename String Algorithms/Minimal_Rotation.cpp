@@ -31,50 +31,32 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-ll fenTree[2 * N], n, q, arr[2 * N];
+// Booth's Algorithm
 
-ll sum(ll idx)
-{
-    ll res = 0;
-    for (; idx >= 0; idx = (idx & (idx + 1)) - 1)
-        res += fenTree[idx];
-    return res;
-}
-
-void add(ll idx, ll val)
-{
-    for (; idx < n; idx = (idx | (idx + 1)))
-        fenTree[idx] += val;
-}
-
-void solution() {}
+string s;
 
 signed main()
 {
     fastIO;
-    mem(fenTree, 0);
+    cin >> s;
+    s = s + s;
+    ll n = s.size(), i = 0, ans = 0;
 
-    cin >> n >> q;
-    fo(i, 0, n) cin >> arr[i];
-
-    while (q--)
+    while (i < n / 2)
     {
-        ll query;
-        cin >> query;
-        if (query == 1)
+        ans = i;
+        ll k = i, j = i + 1;
+        while (j < n && s[j] >= s[k])
         {
-            ll lo, hi, val;
-            cin >> lo >> hi >> val;
-            add(lo - 1, val);
-            if (hi < n)
-                add(hi, -val);
+            if (s[j] == s[k])
+                k++;
+            if (s[j] > s[k])
+                k = i;
+            ++j;
         }
-        else
-        {
-            ll ind;
-            cin >> ind;
-            cout << arr[ind - 1] + sum(ind - 1) << endl;
-        }
+        while (i <= k)
+            i += j - k;
     }
+    cout << s.substr(ans, n / 2);
     return 0;
 }

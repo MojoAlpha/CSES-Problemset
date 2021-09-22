@@ -31,50 +31,38 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-ll fenTree[2 * N], n, q, arr[2 * N];
-
-ll sum(ll idx)
-{
-    ll res = 0;
-    for (; idx >= 0; idx = (idx & (idx + 1)) - 1)
-        res += fenTree[idx];
-    return res;
-}
-
-void add(ll idx, ll val)
-{
-    for (; idx < n; idx = (idx | (idx + 1)))
-        fenTree[idx] += val;
-}
-
 void solution() {}
 
 signed main()
 {
     fastIO;
-    mem(fenTree, 0);
-
-    cin >> n >> q;
-    fo(i, 0, n) cin >> arr[i];
-
-    while (q--)
+    ll n;
+    map<ll, ll> com;
+    cin >> n;
+    vll a(n), b(n), c(n);
+    fo(i, 0, n)
     {
-        ll query;
-        cin >> query;
-        if (query == 1)
-        {
-            ll lo, hi, val;
-            cin >> lo >> hi >> val;
-            add(lo - 1, val);
-            if (hi < n)
-                add(hi, -val);
-        }
-        else
-        {
-            ll ind;
-            cin >> ind;
-            cout << arr[ind - 1] + sum(ind - 1) << endl;
-        }
+        cin >> a[i] >> b[i] >> c[i];
+        b[i]++;
+        com[a[i]], com[b[i]];
     }
+
+    ll coords = 0;
+    for (auto &v : com)
+        v.second = coords++;
+
+    vector<vector<plll>> proj(coords);
+    fo(i, 0, n) proj[com[b[i]]].emplace_back(com[a[i]], c[i]);
+
+    vll dp(coords, 0);
+    fo(i, 0, coords)
+    {
+        if (i > 0)
+            dp[i] = dp[i - 1];
+        for (auto x : proj[i])
+            dp[i] = max(dp[i], dp[x.fi] + x.se);
+    }
+
+    cout << dp[coords - 1] << endl;
     return 0;
 }

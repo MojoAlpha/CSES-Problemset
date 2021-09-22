@@ -49,54 +49,71 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #ifndef ONLINE_JUDGE
 #define deb(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
-#define deb(x...)
+#define debug(x...)
 #endif
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, inv2;
+ll n, u, v, d1[2 * N], d2[2 * N], c[2 * N];
+vll adj[2 * N];
 
-ll binPow(ll a, ll n) {
-    a %= MOD;
-    ll res = 1;
-    while(n) {
-        if(n & 1) res = (res * a) % MOD;
-        a = (a * a) % MOD;
-        n >>= 1;
+void dfs1(ll ver, ll par) {
+    // deb(ver, par);
+    d1[ver] = 0;
+    d2[ver] = 0;
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+        dfs1(ed, ver);
+        if(d1[ed] + 1 > d1[ver]) {
+            d2[ver] = d1[ver];
+            d1[ver] = 1 + d1[ed];
+            c[ver] = ed;
+        }
+        else if(d1[ed] + 1 > d2[ver])
+            d2[ver] = 1 + d1[ed];
     }
-    return res;
 }
 
-ll seriesSum(ll x) {
-    x %= MOD;
-    ll t1 = (x * (x + 1)) % MOD;
-    return (t1 * inv2) % MOD;
+void dfs2(ll ver, ll par) {
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+
+        if(c[ver] == ed) {
+            if(d1[ed] < d2[ver] + 1) {
+                d2[ed] = d1[ed];
+                d1[ed] = d2[ver] + 1;
+                c[ed] = ver;
+            }
+            else
+                d2[ed] = max(d2[ed], d2[ver] + 1);
+        }
+        else {
+            d2[ed] = d1[ed];
+            d1[ed] = d1[ver] + 1;
+            c[ed] = ver;
+        }
+        dfs2(ed, ver);
+        
+    }
 }
 
 void solution() {
     cin >> n;
-    ll i = 1, res = 0;
+    fo(i,1,n) {
+        cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    dfs1(1, -1);
+    dfs2(1, -1);
 
-    while(i * i <= n) {
-        ll cnt = n / i;
-        res = (res + cnt * i) % MOD;
-        ++i;
-    }
-    i = n / i;
-    while(i > 0) {
-        ll lo = n / (i + 1), hi = n / i;
-        ll tmp = (seriesSum(hi) - seriesSum(lo) + MOD) % MOD;
-        res = (res + i * tmp) % MOD;
-        --i;
-    }
-    cout << res;
+    fo(i,1,n+1) cout << d1[i] << " ";
 }
 
 signed main()
 {
     fastIO;
-    inv2 = binPow(2, MOD - 2);
     long t = 1;
     // cin >> t;
     while (t--)

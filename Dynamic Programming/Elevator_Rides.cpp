@@ -8,7 +8,7 @@ using namespace std;
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
 #define rall(ar) ar.rbegin(), ar.rend()
-#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define mem(ar, val) memset(ar, (val), sizeof(ar))
 #define fi first
 #define se second
 #define pb push_back
@@ -31,36 +31,37 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-void solution()
-{
-    ll n, x;
-    cin >> n >> x;
-    vll a(n);
-    fo(i, 0, n) cin >> a[i];
-    priority_queue<ll> pq;
-
-    fo(i, 0, n)
-    {
-        if (pq.empty())
-        {
-            pq.push(0);
-            continue;
-        }
-        if (pq.top() + a[i] <= x)
-        {
-            ll val = pq.top();
-            pq.pop();
-            pq.push(val + a[i]);
-        }
-        else
-            pq.push(a[i]);
-    }
-    cout << pq.size();
-}
-
 signed main()
 {
     fastIO;
-    solution();
+    int n, k;
+    cin >> n >> k;
+    int a[n];
+    fo(i, 0, n) cin >> a[i];
+
+    pair<int, int> dp[1 << n];
+    dp[0] = {0, k + 1};
+
+    for (int s = 1; s < (1 << n); s++)
+    {
+        dp[s] = {25, 0};
+        for (int i = 0; i < n; ++i)
+        {
+            if ((s >> i) & 1)
+            {
+                auto t = dp[s ^ (1 << i)];
+                if (t.se + a[i] > k)
+                {
+                    t.fi++;
+                    t.se = min(a[i], t.se);
+                }
+                else
+                    t.se += a[i];
+                dp[s] = min(dp[s], t);
+            }
+        }
+    }
+
+    cout << dp[(1 << n) - 1].fi;
     return 0;
 }

@@ -39,9 +39,6 @@ void solve()
         lps[i] = j;
     }
 
-    // fo(i, n) cout << lps[i] << " ";
-    // cout << endl;
-
     vl res;
     long j = n - 1;
     while (j > 0 && lps[j] > 0)
@@ -49,7 +46,7 @@ void solve()
         res.push_back(lps[j]);
         if (lps[j - 1] > lps[j])
             break;
-        j = lps[j - 1];
+        j = lps[j] - 1;
     }
     for (long i = res.size() - 1; i >= 0; --i)
         cout << res[i] << " ";

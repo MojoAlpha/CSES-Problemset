@@ -31,49 +31,31 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-ll fenTree[2 * N], n, q, arr[2 * N];
-
-ll sum(ll idx)
-{
-    ll res = 0;
-    for (; idx >= 0; idx = (idx & (idx + 1)) - 1)
-        res += fenTree[idx];
-    return res;
-}
-
-void add(ll idx, ll val)
-{
-    for (; idx < n; idx = (idx | (idx + 1)))
-        fenTree[idx] += val;
-}
-
-void solution() {}
+ll n, m, t;
 
 signed main()
 {
     fastIO;
-    mem(fenTree, 0);
+    cin >> n >> m;
 
-    cin >> n >> q;
-    fo(i, 0, n) cin >> arr[i];
-
-    while (q--)
+    multiset<pll> ms;
+    fo(i, 0, n)
     {
-        ll query;
-        cin >> query;
-        if (query == 1)
-        {
-            ll lo, hi, val;
-            cin >> lo >> hi >> val;
-            add(lo - 1, val);
-            if (hi < n)
-                add(hi, -val);
-        }
+        cin >> t;
+        ms.insert({t, i + 1});
+    }
+
+    fo(i, 0, m)
+    {
+        cin >> t;
+        auto itr = ms.lower_bound({t, 0});
+        if (itr == ms.end())
+            cout << "0 ";
         else
         {
-            ll ind;
-            cin >> ind;
-            cout << arr[ind - 1] + sum(ind - 1) << endl;
+            ms.erase(itr);
+            cout << (*itr).second << " ";
+            ms.insert({(*itr).fi - t, (*itr).se});
         }
     }
     return 0;

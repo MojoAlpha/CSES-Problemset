@@ -31,50 +31,25 @@ typedef vector<vll> vvll;
 const double PI = 3.141592653589793238;
 const ll oo = 1e18;
 
-ll fenTree[2 * N], n, q, arr[2 * N];
-
-ll sum(ll idx)
-{
-    ll res = 0;
-    for (; idx >= 0; idx = (idx & (idx + 1)) - 1)
-        res += fenTree[idx];
-    return res;
-}
-
-void add(ll idx, ll val)
-{
-    for (; idx < n; idx = (idx | (idx + 1)))
-        fenTree[idx] += val;
-}
-
-void solution() {}
-
 signed main()
 {
     fastIO;
-    mem(fenTree, 0);
+    string s;
+    cin >> s;
+    ll n = s.size(), x = 0, y = 0;
 
-    cin >> n >> q;
-    fo(i, 0, n) cin >> arr[i];
-
-    while (q--)
+    vll z(n, 0);
+    fo(i, 1, n)
     {
-        ll query;
-        cin >> query;
-        if (query == 1)
+        z[i] = max(0ll, min(z[i - x], y - i + 1));
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
         {
-            ll lo, hi, val;
-            cin >> lo >> hi >> val;
-            add(lo - 1, val);
-            if (hi < n)
-                add(hi, -val);
-        }
-        else
-        {
-            ll ind;
-            cin >> ind;
-            cout << arr[ind - 1] + sum(ind - 1) << endl;
+            x = i;
+            y = i + z[i];
+            z[i]++;
         }
     }
+    fo(i, 1, n) if (z[i] + i == n) cout << i << ' ';
+    cout << n << endl;
     return 0;
 }

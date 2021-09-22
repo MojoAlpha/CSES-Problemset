@@ -2,60 +2,88 @@
 
 using namespace std;
 
-#define N 100005
+#define N 100002
 #define MOD 1000000007
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
 #define rall(ar) ar.rbegin(), ar.rend()
-#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define mem(ar, val) memset(ar, (val), sizeof(ar))
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO                        \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);                    \
-    cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
 
 typedef long long ll;
-typedef pair<long, long> pll;
-typedef pair<ll, ll> plll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
 typedef vector<int> vi;
-typedef vector<long> vl;
 typedef vector<ll> vll;
 typedef vector<bool> vb;
 typedef vector<vb> vvb;
-typedef vector<vl> vvl;
+typedef vector<vi> vvi;
 typedef vector<vll> vvll;
 
-ll n, k, a[20], res = 0;
+void __print(int x) {cerr << x;}
+void __print(long x) {cerr << x;}
+void __print(long long x) {cerr << x;}
+void __print(unsigned x) {cerr << x;}
+void __print(unsigned long x) {cerr << x;}
+void __print(unsigned long long x) {cerr << x;}
+void __print(float x) {cerr << x;}
+void __print(double x) {cerr << x;}
+void __print(long double x) {cerr << x;}
+void __print(char x) {cerr << '"' << x << '"';}
+void __print(const char *x) {cerr << '"' << x << '"';}
+void __print(const string &x) {cerr << '"' << x << '"';}
+void __print(bool x) {cerr << (x ? "true" : "false");}
 
-const double PI = 3.141592653589793238;
+template<typename T, typename V>
+void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
+template<typename T>
+void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
+void _print() {cerr << "]" << endl;}
+template <typename T, typename... V>
+void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+
+#ifndef ONLINE_JUDGE
+#define deb(x...) cerr << "[" << #x << "] = ["; _print(x)
+#else
+#define deb(x...)
+#endif
+
+const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll countMultiples(ll i)
-{
-    ll num = 1;
-    fo(d, 0, k) if (i & (1 << d)) num *= a[d];
+ll n, k, a[25];
 
-    return n / num;
+void solution() {
+    cin >> n >> k;
+    fo(i, 0, k) cin >> a[i];
+
+    ll res = 0, lim = (1ll << k);
+    for(ll i = 1; i < lim; ++i) {
+        ll ct = n, mm = 1;
+        for(ll j = 0; j < k; ++j) {
+            if(i & mm)
+                ct /= a[j];
+            mm <<= 1;
+        }
+        
+        if(__builtin_popcount(i) & 1)
+            res += ct;
+        else
+            res -= ct;
+    }
+    cout << res;
 }
 
 signed main()
 {
     fastIO;
-    cin >> n >> k;
-    fo(i, 0, k) cin >> a[i];
-
-    ll hi = (1 << k);
-    fo(i, 1, hi)
-    {
-        if (__builtin_popcount(i) == 1)
-            res += countMultiples(i);
-        else
-            res -= countMultiples(i);
-    }
-
-    cout << res;
+    long t = 1;
+    // cin >> t;
+    while (t--)
+        solution();
     return 0;
 }

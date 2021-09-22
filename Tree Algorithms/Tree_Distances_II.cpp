@@ -55,48 +55,48 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, inv2;
+ll n, u, v, dist[2 * N], cnt[2 * N];
+vll adj[2 * N];
 
-ll binPow(ll a, ll n) {
-    a %= MOD;
-    ll res = 1;
-    while(n) {
-        if(n & 1) res = (res * a) % MOD;
-        a = (a * a) % MOD;
-        n >>= 1;
+void dfs1(ll ver, ll par) {
+    dist[ver] = 0;
+    cnt[ver] = 0;
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+        dfs1(ed, ver);
+        cnt[ver] += cnt[ed] + 1;
+        dist[ver] += dist[ed] + cnt[ed] + 1;
     }
-    return res;
 }
 
-ll seriesSum(ll x) {
-    x %= MOD;
-    ll t1 = (x * (x + 1)) % MOD;
-    return (t1 * inv2) % MOD;
+void dfs2(ll ver, ll par) {
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+        ll t1 = cnt[ver] - cnt[ed];
+        ll t2 = dist[ver] - dist[ed] - cnt[ed];
+        dist[ed] += t1 + t2 - 1;
+        cnt[ed] += t1;
+        dfs2(ed, ver);
+    }
 }
 
 void solution() {
     cin >> n;
-    ll i = 1, res = 0;
+    fo(i, 1, n) {
+        cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
 
-    while(i * i <= n) {
-        ll cnt = n / i;
-        res = (res + cnt * i) % MOD;
-        ++i;
-    }
-    i = n / i;
-    while(i > 0) {
-        ll lo = n / (i + 1), hi = n / i;
-        ll tmp = (seriesSum(hi) - seriesSum(lo) + MOD) % MOD;
-        res = (res + i * tmp) % MOD;
-        --i;
-    }
-    cout << res;
+    dfs1(1, -1);
+    dfs2(1, -1);
+
+    fo(i,1,n+1) cout << dist[i] << " ";
 }
 
 signed main()
 {
     fastIO;
-    inv2 = binPow(2, MOD - 2);
     long t = 1;
     // cin >> t;
     while (t--)

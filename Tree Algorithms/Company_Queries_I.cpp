@@ -55,50 +55,13 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, inv2;
-
-ll binPow(ll a, ll n) {
-    a %= MOD;
-    ll res = 1;
-    while(n) {
-        if(n & 1) res = (res * a) % MOD;
-        a = (a * a) % MOD;
-        n >>= 1;
-    }
-    return res;
-}
-
-ll seriesSum(ll x) {
-    x %= MOD;
-    ll t1 = (x * (x + 1)) % MOD;
-    return (t1 * inv2) % MOD;
-}
-
-void solution() {
-    cin >> n;
-    ll i = 1, res = 0;
-
-    while(i * i <= n) {
-        ll cnt = n / i;
-        res = (res + cnt * i) % MOD;
-        ++i;
-    }
-    i = n / i;
-    while(i > 0) {
-        ll lo = n / (i + 1), hi = n / i;
-        ll tmp = (seriesSum(hi) - seriesSum(lo) + MOD) % MOD;
-        res = (res + i * tmp) % MOD;
-        --i;
-    }
-    cout << res;
-}
+void solution() {}
 
 signed main()
 {
     fastIO;
-    inv2 = binPow(2, MOD - 2);
     long t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--)
         solution();
     return 0;

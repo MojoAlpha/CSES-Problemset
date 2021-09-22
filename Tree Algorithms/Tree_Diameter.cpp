@@ -13,7 +13,7 @@ using namespace std;
 #define se second
 #define pb push_back
 #define deb(x) cout << #x << '=' << x << endl;
-#define deb2(x, y) cout << #x << '=' << x << ', ' << #y << '=' << y << endl;
+#define deb2(x, y) cout << #x << '=' << x << ',' << #y << '=' << y << endl;
 #define fastIO                        \
     ios_base::sync_with_stdio(false); \
     cin.tie(NULL);                    \
@@ -32,34 +32,33 @@ typedef vector<vll> vvll;
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
+ll n, u, v;
 vll adj[2 * N];
-ll dp[2 * N][2], n, u, v;
 
-void dfs(ll vt, ll par)
+ll dfs(ll ver, ll par, ll &longest)
 {
-    for (auto &to : adj[vt])
+    ll res = 0;
+
+    priority_queue<ll> pq;
+    for (auto &ed : adj[ver])
     {
-        if (to == par)
+        if (ed == par)
             continue;
-        dfs(to, vt);
-        dp[vt][0] += max(dp[to][0], dp[to][1]);
+        ll tmp = 0;
+        res = max(res, dfs(ed, ver, tmp));
+        pq.push(tmp);
     }
 
-    for (auto &to : adj[vt])
+    if (!pq.empty())
     {
-        if (to == par)
-            continue;
-        //                              1      2     3                    4
-        dp[vt][1] = max(dp[vt][1], dp[to][0] + 1 + dp[vt][0] - max(dp[to][0], dp[to][1]));
+        longest = 1 + pq.top();
+        pq.pop();
     }
+    longest = max(longest, 1ll);
+
+    res = max(res, longest + (!pq.empty() ? pq.top() : 0ll));
+    return res;
 }
-
-/*
-1 - maximum set with to as root without selecting any child of to
-2 - the extra added edge into set
-3 - the maximum set without selecting any child of vt
-4 - the value which was added to [3] while calculating [3]
-*/
 
 void solution()
 {
@@ -67,11 +66,11 @@ void solution()
     fo(i, 1, n)
     {
         cin >> u >> v;
-        adj[u - 1].pb(v - 1);
-        adj[v - 1].pb(u - 1);
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
-    dfs(0, -1);
-    cout << max(dp[0][0], dp[0][1]);
+    ll longest = 0;
+    cout << dfs(1, -1, longest) - 1;
 }
 
 signed main()
