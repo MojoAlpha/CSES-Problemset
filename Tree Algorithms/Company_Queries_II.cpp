@@ -55,60 +55,58 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, q, u, v, timer = 0, l;
+vll tin, tout;
+vvll adj, up;
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
+void dfs(ll src, ll par) {
+    tin[src] = ++timer;
+    up[src][0] = par;
+    fo(i, 1, l + 1)
+        up[src][i] = up[up[src][i - 1]][i - 1];
+    
+    for(auto &ed : adj[src]) {
         if(ed == par) continue;
-        dfs(ed, ver);
+        dfs(ed, src);
     }
 
-    tout[ver] = ++timer;
+    tout[src] = ++timer;
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+bool isAncestor(ll u, ll v) {
+    return (tin[u] <= tin[v] && tout[u] >= tout[v]);
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+ll lca(ll u, ll v) {
+    if(isAncestor(u, v)) return u;
+    if(isAncestor(v, u)) return v;
+
+    rfo(i, l, 0) {
+        if(!isAncestor(up[u][i], v))
+            u = up[u][i];
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+    return up[u][0];
 }
 
 void solution() {
     cin >> n >> q;
-    fo(i,2,n+1) {
+
+    l = floor(log2(n)) + 1;
+    adj.resize(n + 1, vll());
+    up.resize(n + 1, vll(l + 1, 1));
+    tin.resize(n + 1, 0);
+    tout.resize(n + 1, 0);
+
+    fo(i, 2, n + 1) {
         cin >> v;
         adj[v].pb(i);
     }
-    preprocess();
+    dfs(1, 1);
 
-    while(q--) {
+    while (q--)
+    {
         cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+        cout << lca(u, v) << endl;
     }
 }
 

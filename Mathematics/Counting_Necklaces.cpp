@@ -55,61 +55,29 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+// Orbit counting theorem or burnside's lemma
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
+ll n, m;
 
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
+ll binPow(ll a, ll n) {
+    ll res = 1;
+    while(n) {
+        if(n & 1) res = (res * a) % MOD;
+        a = (a * a) % MOD;
+        n >>= 1;
     }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
-}
-
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
-}
-
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
-    }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+    return res;
 }
 
 void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
+    ll res = 0;
+    cin >> n >> m;
+    fo(i,0,n) {
+        ll k = __gcd(n, (ll)i);
+        res = (res + binPow(m, k)) % MOD;
     }
-    preprocess();
-
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
-    }
+    res = (res * binPow(n, MOD - 2)) % MOD;
+    cout << res;
 }
 
 signed main()

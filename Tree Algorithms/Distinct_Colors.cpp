@@ -55,69 +55,55 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, q, c[2 * N], res[2 * N], a, b;
+vll adj[2 * N];
+set<int> st[2 * N];
 
 void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
+    ll mx = 0, id = 0;
     for(auto &ed : adj[ver]) {
         if(ed == par) continue;
         dfs(ed, ver);
+        if(st[ed].size() > mx) {
+            mx = st[ed].size();
+            id = ed;
+        }
     }
-
-    tout[ver] = ++timer;
+    if(!id) {
+        res[ver] = 1;
+        return;
+    }
+    swap(st[ver], st[id]);
+    for(auto &ed : adj[ver]) {
+        if(ed == par || ed == id) continue;
+        for(auto &i : st[ed]) st[ver].insert(i);
+        st[ed].clear();
+    }
+    st[ver].insert(c[ver]);
+    res[ver] = st[ver].size();
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
+void solution(ll testno) {
+    cin >> n;
+    fo(i,1,n+1) {
+        cin >> c[i];
+        st[i].insert(c[i]);
+    }
+    fo(i,1,n) {
+        cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
     dfs(1, -1);
-}
-
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
-    }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
-}
-
-void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
-    }
-    preprocess();
-
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
-    }
+    fo(i,1,n+1) cout << res[i] << " ";
 }
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    // cin >> t;
-    while (t--)
-        solution();
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

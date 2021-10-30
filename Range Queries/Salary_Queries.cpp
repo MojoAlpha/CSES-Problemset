@@ -54,61 +54,71 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
+const ll MX = 4e5 + 4;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, nn, q, u, v, bit[MX];
+vll ar, br, val;
+char t;
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
+void add(ll ind, ll x) {
+    for(; ind < nn; ind = (ind | (ind + 1)))
+        bit[ind] += x;
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+void upd(ll ind, ll x) {
+    ll id = upper_bound(all(val), ind) - val.begin() - 1;
+    add(id, x);
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
-    }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+ll sum(ll ind) {
+    ll res = 0;
+    for(; ind >= 0; ind = (ind & (ind + 1)) - 1)
+        res += bit[ind];
+    return res;
+}
+
+ll query(ll ind) {
+    ll id = upper_bound(all(val), ind) - val.begin() - 1;
+    return sum(id); 
 }
 
 void solution() {
     cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
+    fo(i,0,n) {
+        cin >> u;
+        ar.pb(u);
     }
-    preprocess();
+    br = ar;
+    vvll qr;
+    fo(i,0,q) {
+        cin >> t >> u >> v;
+        qr.pb({t == '?', u, v});
+        if(t == '!') br.pb(v);
+    }
+    sort(all(br));
+    fo(i,0,br.size()) {
+        if(val.empty()) val.pb(br[i]);
+        else if(val.back() != br[i]) val.pb(br[i]);
+    }
+    nn = val.size();
+    // deb(ar);
+    // deb(br);
+    // deb(val);
 
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+    fo(i,0,n) upd(ar[i], 1);
+    for(auto &ai : qr) {
+        ai[1]--;
+        // deb(ai);
+        if(!ai[0]) {
+            upd(ar[ai[1]], -1);
+            ar[ai[1]] = ai[2];
+            upd(ar[ai[1]], 1);
+        }
+        else 
+            cout << query(ai[2]) - query(ai[1]) << endl;
+        
+        // fo(i,0,n) cout << query(ar[i]) - query(ar[i] - 1) << " ";
+        // cout << endl;
     }
 }
 

@@ -55,69 +55,14 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
-
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
-}
-
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
-}
-
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
-    }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
-}
-
-void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
-    }
-    preprocess();
-
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
-    }
-}
+void solution(ll testno) {}
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    // cin >> t;
-    while (t--)
-        solution();
+    ll test = 1;
+    cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

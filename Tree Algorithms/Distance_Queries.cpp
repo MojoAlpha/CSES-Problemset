@@ -55,68 +55,78 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+int n, l, q, u, v, timer, tin[2 * N], tout[2 * N], pdist[40];
+vi adj[2 * N], up[2 * N];
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
+void dfs(int src, int par) {
+    tin[src] = ++timer;
+    up[src][0] = par;
+    fo(i, 1, l + 1)
+        up[src][i] = up[up[src][i - 1]][i - 1];
 
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
+    for(int &ed : adj[src]) {
         if(ed == par) continue;
-        dfs(ed, ver);
+        dfs(ed, src);
     }
 
-    tout[ver] = ++timer;
+    tout[src] = ++timer;
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+bool isAncestor(int u, int v) {
+    return (tin[u] <= tin[v] && tout[u] >= tout[v]);
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+int lca(int u, int v) {
+    if(isAncestor(u, v)) return u;
+    if(isAncestor(v, u)) return v;
+
+    rfo(i, l, 0) {
+        if(!isAncestor(up[u][i], v))
+            u = up[u][i];
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+    return up[u][0];
+}
+
+int lca_dist(int lca_val, int u) {
+    int dist = 0;
+    if(lca_val == u) return dist;
+
+    rfo(i, l, 0) {
+        if(!isAncestor(up[u][i], lca_val)) {
+            u = up[u][i];
+            dist += pdist[i];
+        }
+    }
+    return dist + 1;
 }
 
 void solution() {
+    timer = 0;
     cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
+    l = floor(log2(n)) + 1;
+    fo(i,1,n + 1)
+        up[i].resize(l + 1, 1);
+
+    fo(i, 1, n) {
+        cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
-    preprocess();
+    dfs(1, 1);
 
     while(q--) {
         cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+        ll t1 = lca(u, v);
+        printf("%d\n", lca_dist(t1, u) + lca_dist(t1, v));
     }
 }
 
 signed main()
 {
     fastIO;
+    pdist[0] = 1;
+    fo(i,1,40) pdist[i] = (pdist[i - 1] * 2);
     long t = 1;
-    // cin >> t;
     while (t--)
         solution();
     return 0;

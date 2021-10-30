@@ -55,60 +55,57 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, m, tree[8 * N][4], a[2 * N], k, x;
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
+/*
+0 - sum
+1 - max pref
+2 - max suf
+3 - max subarray sum
+*/
 
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
+void upd(ll id) {
+    tree[id][0] = tree[2 * id][0] + tree[2 * id + 1][0];
+    tree[id][1] = max(tree[2 * id][1], tree[2 * id + 1][1] + tree[2 * id][0]);
+    tree[id][2] = max(tree[2 * id + 1][2], tree[2 * id + 1][0] + tree[2 * id][2]);
+    tree[id][3] = max({tree[2 * id][3], tree[2 * id + 1][3], tree[2 * id][2] + tree[2 * id + 1][1]});
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+void build(ll id, ll lt, ll rt) {
+    if(lt == rt) {
+        tree[id][0] = a[lt];
+        tree[id][1] = tree[id][2] = tree[id][3] =  max(a[lt], 0ll);
+    }
+    else {
+        ll mid = (lt + rt) / 2;
+        build(2 * id, lt, mid);
+        build(2 * id + 1, mid + 1, rt);
+        upd(id);
+    }
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+void update(ll id, ll lt, ll rt, ll ind, ll val) {
+    if(lt == rt && lt == ind) {
+        tree[id][0] = val;
+        tree[id][1] = tree[id][2] = tree[id][3] = max(val, 0ll);
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+    else {
+        ll mid = (lt + rt) / 2;
+        if(ind <= mid) update(2 * id, lt, mid, ind, val);
+        else update(2 * id + 1, mid + 1, rt, ind, val);
+        upd(id);
+    }
 }
 
 void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
-    }
-    preprocess();
+    cin >> n >> m;
+    fo(i, 1, n + 1) cin >> a[i];
+    build(1, 1, n); 
 
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+    while(m--) {
+        cin >> k >> x;
+        update(1, 1, n, k, x);
+        cout << max(tree[1][3], 0ll) << endl;
     }
 }
 

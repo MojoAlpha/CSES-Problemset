@@ -54,70 +54,77 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
+const ll sz = 2 * N;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, q, qr, p, x;
+ll st[4 * sz][2], v[sz], a[sz];
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
+void upd(ll id) {
+    st[id][0] = min(st[2 * id][0], st[2 * id + 1][0]);
+    st[id][1] = min(st[2 * id][1], st[2 * id + 1][1]);
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
-}
-
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+void build(ll id, ll lt, ll rt) {
+    if(lt == rt) {
+        st[id][0] = v[lt] + a[lt];
+        st[id][1] = -v[lt] + a[lt];
+        return;
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+    ll mid = (lt + rt) / 2;
+    build(2 * id, lt, mid);
+    build(2 * id + 1, mid + 1, rt);
+    upd(id);
 }
 
-void solution() {
+void update(ll id, ll lt, ll rt, ll ind, ll val) {
+    // deb(id, lt, rt, ind, val);
+    if(lt == rt) {
+        st[id][0] += val;
+        st[id][1] += val;
+        return;
+    }
+    ll mid = (lt + rt) / 2;
+    if(ind <= mid) update(2 * id, lt, mid, ind, val);
+    else update(2 * id + 1, mid + 1, rt, ind, val);
+    upd(id);
+}
+
+ll query(ll id, ll lt, ll rt, ll lr, ll rr, ll type) {
+    // deb(id, lt, rt, lr, rr, type);
+    if(lr > rr) return oo;
+    if(lt == lr && rt == rr) return st[id][type];
+    ll mid = (lt + rt) / 2;
+    return min(query(2 * id, lt, mid, lr, min(rr, mid), type), query(2 * id + 1, mid + 1, rt, max(mid + 1, lr), rr, type));
+}
+
+void solution(ll testno) {
     cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
-    }
-    preprocess();
+    fo(i,1,n+1) cin >> a[i];
+    fo(i,1,n+1) v[i] = i;
+    build(1, 1, n);
 
     while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+        cin >> qr;
+        if(qr == 1) {
+            cin >> p >> x;
+            update(1, 1, n, p, x - a[p]);
+            a[p] = x;
+        }
+        else {
+            cin >> p;
+            ll v1 = query(1, 1, n, p, n, 0);
+            ll v2 = query(1, 1, n, 1, p, 1);
+            cout << min(v1 - p, v2 + p) << endl;
+        }
     }
 }
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    // cin >> t;
-    while (t--)
-        solution();
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

@@ -55,66 +55,59 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, mat[6][6], res[6][6];
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
+void matMultiply(ll a1[6][6], ll a2[6][6]) {
+    ll t1[6][6];
+    fo(i, 0, 6) {
+        fo(j, 0, 6) {
+            t1[i][j] = 0;
+            fo(k, 0, 6)
+                t1[i][j] = (t1[i][j] + a1[i][k] * a2[k][j]) % MOD;
+        }
     }
-
-    for(auto &ed : adj[ver]) {
-        if(ed == par) continue;
-        dfs(ed, ver);
-    }
-
-    tout[ver] = ++timer;
+    
+    fo(i, 0, 6)
+        fo(j, 0, 6)
+            a1[i][j] = t1[i][j];
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
-}
-
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+void matPow(ll n) {
+    while(n) {
+        if(n & 1) matMultiply(res, mat);
+        matMultiply(mat, mat);
+        n >>= 1;
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
 }
 
 void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
+    cin >> n;
+    ll val[6];
+    val[0] = 1;
+    fo(i, 1, 6) {
+        val[i] = 0;
+        fo(j, 0, i)
+            val[i] += val[j];
     }
-    preprocess();
-
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+    if(n < 6) {
+        cout << val[n];
+        return;
     }
+    matPow(n - 5);
+    ll ans = 0;
+    fo(i, 0, 6) ans = (ans + res[0][i] * val[5 - i]) % MOD;
+    cout << ans;
 }
 
 signed main()
 {
     fastIO;
+
+    fo(i, 0, 6)
+        res[i][i] = mat[0][i] = 1;
+    fo(i, 1, 6)
+        mat[i][i - 1] = 1;
+
     long t = 1;
     // cin >> t;
     while (t--)

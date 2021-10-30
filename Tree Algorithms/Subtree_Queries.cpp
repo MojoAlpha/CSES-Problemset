@@ -55,69 +55,72 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, q, v[2 * N], ar[4 * N], bit[4 * N], qr, s, x, a, b, tim;
+vll adj[2 * N], ind[2 * N];
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
-    for(auto &ed : adj[ver]) {
+void dfs(ll src, ll par) {
+    ind[src].pb(tim);
+    ar[tim++] = src;
+    for(ll &ed : adj[src]) {
         if(ed == par) continue;
-        dfs(ed, ver);
+        dfs(ed, src);
     }
-
-    tout[ver] = ++timer;
+    ind[src].pb(tim);
+    ar[tim++] = src;
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+void add(ll id, ll val) {
+    for(; id < 2 * n; id = id | (id + 1))
+        bit[id] += val;
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
-    }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
+ll sum(ll id) {
+    ll res = 0;
+    if(id < 0) return res;
+    for(; id >= 0; id = (id & (id + 1)) - 1)
+        res += bit[id];
+    return res;
 }
 
-void solution() {
+ll query(ll l, ll r) {
+    return sum(r) - sum(l - 1);
+}
+
+void solution(ll testno) {
+    tim = 0;
     cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
+    fo(i,0,n) cin >> v[i];
+    fo(i,1,n) {
+        cin >> a >> b;
+        adj[a - 1].pb(b - 1);
+        adj[b - 1].pb(a - 1);
     }
-    preprocess();
+    dfs(0, -1);
+    fo(i,0,2*n) add(i, v[ar[i]]);
 
     while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
+        cin >> qr;
+        if(qr == 1) {
+            cin >> s >> x;
+            s--;
+            add(ind[s][0], x - v[s]);
+            add(ind[s][1], x - v[s]);
+            v[s] = x;
+        }
+        else {
+            cin >> s;
+            s--;
+            cout << query(ind[s][0], ind[s][1]) / 2 << endl;
+        }
     }
 }
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    // cin >> t;
-    while (t--)
-        solution();
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

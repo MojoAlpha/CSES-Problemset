@@ -54,70 +54,57 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
+const ll mn = 2 * N;
 
-ll n, q, u, v, l, timer;
-vll adj[2 * N], tin, tout;
-vvll up;
+ll n, a, b, cnt[mn], centroid;
+vll adj[mn];
 
-void dfs(ll ver, ll par) {
-    tin[ver] = ++timer;
-    up[ver][0] = par;
-
-    fo(i, 1, l + 1) {
-        if(up[ver][i - 1] != -1)
-            up[ver][i] = up[up[ver][i - 1]][i - 1];
-    }
-
+void dfs_cnt(ll ver, ll par) {
+    cnt[ver] = 1;
     for(auto &ed : adj[ver]) {
         if(ed == par) continue;
-        dfs(ed, ver);
+        dfs_cnt(ed, ver);
+        cnt[ver] += cnt[ed];
     }
-
-    tout[ver] = ++timer;
 }
 
-void preprocess() {
-    timer = 0;
-    l = floor(log2(n)) + 1;
-    up.assign(n + 1, vll(l + 1, -1));
-    tin.assign(n + 1, 0);
-    tout.assign(n + 1, 0);
-    dfs(1, -1);
+void dfs_centroid(ll ver, ll par) {
+    bool isCentroid = 1;
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+        if(cnt[ed] > n / 2)
+            isCentroid = 0;
+    }
+    if(n - cnt[ver] > n / 2)
+        isCentroid = 0;
+    if(isCentroid)
+        centroid = ver;
+    
+    for(auto &ed : adj[ver]) {
+        if(ed == par) continue;
+        dfs_centroid(ed, ver);
+    }
 }
 
-ll find_ancestor(ll node, ll k) {
-    if(k == 0) return node;
-    if(node == -1) return -1;
-    ll cc = 0, pw = 1;
-    while(pw <= k) {
-        pw *= 2;
-        cc++;
+void solution(ll testno) {
+    cin >> n;
+    fo(i,1,n) {
+        cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
     }
-    pw /= 2;
-    cc--;
-    return find_ancestor(up[node][cc], k - pw);
-}
-
-void solution() {
-    cin >> n >> q;
-    fo(i,2,n+1) {
-        cin >> v;
-        adj[v].pb(i);
-    }
-    preprocess();
-
-    while(q--) {
-        cin >> u >> v;
-        cout << find_ancestor(u, v) << endl;
-    }
+    dfs_cnt(1, -1);
+    dfs_centroid(1, -1);
+    cout << centroid;
 }
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    // cin >> t;
-    while (t--)
-        solution();
+    centroid = 0;
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }
