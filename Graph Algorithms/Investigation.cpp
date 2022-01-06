@@ -55,52 +55,59 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
-
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
-}
-
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
-    }
-}
+ll n, m, a, b, c;
+vector<pll> adj[N];
 
 void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
+    cin >> n >> m;
+    fo(i,0,m) {
+        cin >> a >> b >> c;
+        adj[a].pb({b, c});
     }
-    ll ans = 0;
 
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
+    vvll dp(n + 1, vll({oo, 0ll, oo, 0ll}));
+    vb vis(n + 1, 0);
+    dp[1][0] = 0;
+    dp[1][1] = 1;
+    dp[1][2] = 0;
+    dp[1][3] = 0;
+
+    priority_queue<pll, vector<pll>, greater<pll>> pq;
+    pq.push({0, 1});
+
+    while(!pq.empty()) {
+        pll p = pq.top();
+        pq.pop();
+        if(vis[p.se]) continue;
+        vis[p.se] = 1;
+
+        for(auto &ed : adj[p.se]) {
+            ll wt = ed.se, to = ed.fi;
+            if(vis[to]) continue;
+
+            if(p.fi + wt < dp[to][0]) {
+                dp[to][0] = p.fi + wt;
+                dp[to][1] = dp[p.se][1];
+                dp[to][2] = dp[p.se][2] + 1;
+                dp[to][3] = dp[p.se][3] + 1;
+                pq.push({dp[to][0], to});
+            }
+            else if(p.fi + wt == dp[to][0]) {
+                dp[to][1] += dp[p.se][1];
+                dp[to][1] %= MOD;
+                dp[to][2] = min(dp[to][2], dp[p.se][2] + 1);
+                dp[to][3] = max(dp[to][3], dp[p.se][3] + 1);
+                pq.push({dp[to][0], to});
+            }
+        }
     }
-    cout << ans;
+    fo(i,0,4) cout << dp[n][i] << " ";
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
     // cin >> test;
     fo(i, 1, test + 1) {

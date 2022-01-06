@@ -55,52 +55,53 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
-
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
-
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
-}
-
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
-    }
-}
 
 void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
-    }
-    ll ans = 0;
+    string s;
+    ll n, reso = 0, rese = 0, ind1 = -1, ind2 = -1;
+    cin >> s;
+    n = s.size();
+    vll d1(n), d2(n);
 
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
+    for(ll i = 0, l = 0, r = -1; i < n; ++i) {
+        ll k = (i > r) ? 1 : min(d1[l + r - i], r - i + 1);
+        while(i - k >= 0 && i + k < n && s[i - k] == s[i + k])
+            k++;
+        d1[i] = k--;
+        if(i + k > r) {
+            l = i - k;
+            r = i + k;
+        }
+
+        if(reso < d1[i]) {
+            reso = d1[i];
+            ind1 = i;
+        }
     }
-    cout << ans;
+
+    for(ll i = 0, l = 0, r = -1; i < n; ++i) {
+        ll k = (i > r) ? 0 : min(d2[l + r - i + 1], r - i + 1);
+        while(i - k - 1 >= 0 && i + k < n && s[i - k - 1] == s[i + k])
+            k++;
+        d2[i] = k--;
+        if(i + k > r) {
+            l = i - k - 1;
+            r = i + k;
+        }
+
+        if(rese < d2[i]) {
+            rese = d2[i];
+            ind2 = i;
+        }
+    }
+
+    if(reso > rese) cout << s.substr(ind1 - reso + 1, 2 * reso - 1);
+    else cout << s.substr(ind2 - rese, 2 * rese);
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
     // cin >> test;
     fo(i, 1, test + 1) {

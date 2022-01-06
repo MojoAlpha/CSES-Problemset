@@ -4,7 +4,6 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
-#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -55,57 +54,59 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
+ll n, m, k, x, y;
+vvll a, res;
 
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
+void multiply(vvll &m1, vvll &m2) {
+    vvll m3(n, vll(n, 0));
+    fo(i,0,n) {
+        fo(j,0,n) {
+            fo(k,0,n) {
+                m3[i][j] += (m1[i][k] * m2[k][j]) % MOD;
+                m3[i][j] %= MOD;
+            }
+        }
+    }
+
+    fo(i,0,n) {
+        fo(j,0,n) {
+            m1[i][j] = m3[i][j];
         }
     }
 }
 
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
+void matPow(ll pw) {
+    while(pw) {
+        if(pw & 1) multiply(res, a);
+        multiply(a, a);
+        pw >>= 1;
     }
 }
 
 void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
-    }
-    ll ans = 0;
+    cin >> n >> m >> k;
+    a.resize(n, vll(n, 0));
+    res.resize(n, vll(n, 0));
+    fo(i,0,n) res[i][i] = 1;
 
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
+    fo(i,0,m) {
+        cin >> x >> y;
+        x--;
+        y--;
+        a[x][y]++;
     }
-    cout << ans;
+    
+    matPow(k);
+    cout << res[0][n - 1];
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
     // cin >> test;
-    fo(i, 1, test + 1) {
+    fo(i, 1, test + 1)
         solution(i);
-        cout << endl;
-    }
     return 0;
 }

@@ -4,6 +4,7 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
+#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -44,26 +45,28 @@ template<typename T>
 void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
 void _print() {cerr << "]" << endl;}
 template <typename T, typename... V>
-void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << 
-; _print(v...);}
+void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
 
 #ifndef ONLINE_JUDGE
-#define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
+#define deb(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
-#define debug(x...)
+#define deb(x...)
 #endif
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
+const double EPS = 1e-6;
 
-void solution() {}
+void solution(ll testno) {}
 
 signed main()
 {
     fastIO;
-    long t = 1;
-    cin >> t;
-    while (t--)
-        solution();
+    ll test = 1;
+    cin >> test;
+    fo(i, 1, test + 1) {
+        solution(i);
+        cout << endl;
+    }
     return 0;
 }

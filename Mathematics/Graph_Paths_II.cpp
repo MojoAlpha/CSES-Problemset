@@ -4,7 +4,6 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
-#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -55,57 +54,15 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
-
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
-}
-
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
-    }
-}
-
-void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
-    }
-    ll ans = 0;
-
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
-    }
-    cout << ans;
-}
+void solution(ll testno) {}
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
-    // cin >> test;
-    fo(i, 1, test + 1) {
+    cin >> test;
+    fo(i, 1, test + 1)
         solution(i);
-        cout << endl;
-    }
     return 0;
 }

@@ -54,58 +54,47 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 10 * N;
+const ll oo = 9e18;
+const double EPS = 1e-6;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
+ll n, x, y;
+vector<pll> pts;
 
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
+ll euclideanDistance(pll a, pll b) {
+    ll dx = a.fi - b.fi, dy = a.se - b.se;
+    return dx * dx + dy * dy;
 }
 
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
+ll closest_points() {
+    set<pll> st;
+    st.insert({pts[0].se, pts[0].fi});
+    ll left = 0, res = oo;
+    for(ll i = 1; i < n; ++i) {
+        ll dd = ceil(sqrt(res));
+        while(left < i && pts[i].fi - pts[left].fi > res) {
+            st.erase({pts[left].se, pts[left].fi});
+            left++;
         }
-    }
-}
 
-void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
+        auto lt = st.lower_bound({pts[i].se - dd, 0});
+        auto rt = st.upper_bound({pts[i].se + dd, 0});
+        for(auto it = lt; it != rt; ++it)
+            res = min(res, euclideanDistance({it->se, it->fi}, pts[i]));
+        st.insert({pts[i].se, pts[i].fi});
     }
-    ll ans = 0;
 
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
-    }
-    cout << ans;
+    return res;
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
-    ll test = 1;
-    // cin >> test;
-    fo(i, 1, test + 1) {
-        solution(i);
-        cout << endl;
+    cin >> n;
+    fo(i,0,n) {
+        cin >> x >> y;
+        pts.pb({x, y});
     }
+    sort(all(pts));
+    cout << closest_points();
     return 0;
 }

@@ -2,102 +2,109 @@
 
 using namespace std;
 
-#define N 100005
+#define N 100002
 #define MOD 1000000007
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
 #define rall(ar) ar.rbegin(), ar.rend()
-#define mem(ar, val) memset(ar, val, sizeof(ar))
+#define mem(ar, val) memset(ar, (val), sizeof(ar))
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO                        \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);                    \
-    cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
 
 typedef long long ll;
-typedef pair<long, long> pll;
-typedef pair<ll, ll> plll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
 typedef vector<int> vi;
-typedef vector<long> vl;
 typedef vector<ll> vll;
 typedef vector<bool> vb;
 typedef vector<vb> vvb;
-typedef vector<vl> vvl;
+typedef vector<vi> vvi;
 typedef vector<vll> vvll;
 
-const double PI = 3.141592653589793238;
+void __print(int x) {cerr << x;}
+void __print(long x) {cerr << x;}
+void __print(long long x) {cerr << x;}
+void __print(unsigned x) {cerr << x;}
+void __print(unsigned long x) {cerr << x;}
+void __print(unsigned long long x) {cerr << x;}
+void __print(float x) {cerr << x;}
+void __print(double x) {cerr << x;}
+void __print(long double x) {cerr << x;}
+void __print(char x) {cerr << '"' << x << '"';}
+void __print(const char *x) {cerr << '"' << x << '"';}
+void __print(const string &x) {cerr << '"' << x << '"';}
+void __print(bool x) {cerr << (x ? "true" : "false");}
+
+template<typename T, typename V>
+void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
+template<typename T>
+void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
+void _print() {cerr << "]" << endl;}
+template <typename T, typename... V>
+void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+
+#ifndef ONLINE_JUDGE
+#define deb(x...) cerr << "[" << #x << "] = ["; _print(x)
+#else
+#define deb(x...)
+#endif
+
+const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
 
-ll n, m, k, u, v, w;
+ll n, m, k, a, b, w;
 
-void djikstra(vector<vector<pll>> &adj, vll &dist, long s)
-{
-    dist[s] = 0;
+void solution(ll testno) {
+    cin >> n >> m >> k;
+    vector<vector<pll>> adj(n + 1);
+    fo(i,0,m) {
+        cin >> a >> b >> w;
+        adj[a].pb({b, w});
+    }
+    
+    vector<priority_queue<ll>> best(n + 1);
     priority_queue<pll, vector<pll>, greater<pll>> pq;
-    pq.push({0, s});
+    pq.push({0, 1});
+    best[1].push(0);
 
-    while (!pq.empty())
-    {
-        long v = pq.top().se, dv = pq.top().fi;
+    while(!pq.empty()) {
+        auto p = pq.top();
         pq.pop();
 
-        if (dv != dist[v])
-            continue;
+        if(p.fi > best[p.se].top()) continue;
 
-        for (auto e : adj[v])
-        {
-            long to = e.fi, len = e.se;
-            if (dist[v] + len < dist[to])
-            {
-                dist[to] = dist[v] + len;
-                pq.push({dist[to], to});
+        for(auto &ed : adj[p.se]) {
+            ll dist = p.fi + ed.se;
+            if(best[ed.fi].size() < k) {
+                best[ed.fi].push(dist);
+                pq.push({dist, ed.fi});
+            }
+            else if(best[ed.fi].top() > dist) {
+                best[ed.fi].pop();
+                best[ed.fi].push(dist);
+                pq.push({dist, ed.fi});
             }
         }
     }
-}
 
-void solution()
-{
-    cin >> n >> m >> k;
-    vector<vector<pll>> adj1(n + 1), adj2(n + 1);
-    fo(i, 0, m)
-    {
-        cin >> u >> v >> w;
-        adj1[u].pb({v, w});
-        adj2[v].pb({u, w});
+    vll res;
+    while(!best[n].empty()) {
+        res.pb(best[n].top());
+        best[n].pop();
     }
-
-    vll dist1(n + 1, oo), dist2(n + 1, oo);
-    djikstra(adj1, dist1, 1);
-    djikstra(adj2, dist2, n);
-
-    priority_queue<ll> pq;
-
-    fo(i, 1, n + 1)
-    {
-        for (auto e : adj1[i])
-        {
-            pq.push(dist1[i] + e.se + dist2[e.fi]);
-            if (pq.size() > k)
-                pq.pop();
-        }
-    }
-
-    vll res(k);
-    while (!pq.empty())
-    {
-        res[pq.size() - 1] = pq.top();
-        pq.pop();
-    }
-    fo(i, 0, k) cout << res[i] << " ";
+    reverse(all(res));
+    for(auto &x : res) cout << x << " ";
 }
 
 signed main()
 {
     fastIO;
-    solution();
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

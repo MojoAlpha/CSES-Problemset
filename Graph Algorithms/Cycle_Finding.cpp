@@ -1,83 +1,107 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define N 100005
-#define M 10000005
-#define O 1000000007
-#define vi vector<int>
-#define vl vector<long>
-#define vb vector<bool>
-#define vll vector<long long>
-#define pii pair<int, int>
-#define pll pair<long, long>
-#define plll pair<long long, long long>
-#define fo(i, N) for (long i = 0; i < N; ++i)
-#define fos(i, b, N) for (long i = b; i < N; ++i)
-#define forr(i, N) for (long i = N; i >= 0; --i)
-const double PI = 3.141592653589793238;
-const ll oo = 1e18;
-#define fast                          \
-    ios_base::sync_with_stdio(false); \
-    cin.tie(NULL);
 
 using namespace std;
 
-long n, m;
-vector<vector<plll>> adj;
-vi vis, cycle;
-bool f = false;
+#define N 100002
+#define MOD 1000000007
+#define fo(i, b, n) for (long i = b; i < n; ++i)
+#define rfo(i, b, n) for (long i = b; i >= n; --i)
+#define all(ar) ar.begin(), ar.end()
+#define rall(ar) ar.rbegin(), ar.rend()
+#define mem(ar, val) memset(ar, (val), sizeof(ar))
+#define fi first
+#define se second
+#define pb push_back
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
 
-void negCycle(long s, long wt)
-{
-    vis[s] = 1;
-    cycle.push_back(s);
-    for (auto edge : adj[s])
-    {
-        if (vis[edge.first] == 0)
-            negCycle(edge.first, edge.second + wt);
-        else if (vis[edge.first] == 1 && wt + edge.second < 0)
-        {
-            f = true;
-            cout << "YES\n"
-                 << edge.first << " ";
-            while (cycle.back() != edge.first)
-            {
-                cout << cycle.back() << " ";
-                cycle.pop_back();
-            }
-            cout << cycle.back();
-            return;
-        }
-        if (f)
-            break;
-    }
-    vis[s] = 2;
-}
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vll;
+typedef vector<bool> vb;
+typedef vector<vb> vvb;
+typedef vector<vi> vvi;
+typedef vector<vll> vvll;
 
-void solve()
-{
-    ll a, b, c;
+void __print(int x) {cerr << x;}
+void __print(long x) {cerr << x;}
+void __print(long long x) {cerr << x;}
+void __print(unsigned x) {cerr << x;}
+void __print(unsigned long x) {cerr << x;}
+void __print(unsigned long long x) {cerr << x;}
+void __print(float x) {cerr << x;}
+void __print(double x) {cerr << x;}
+void __print(long double x) {cerr << x;}
+void __print(char x) {cerr << '"' << x << '"';}
+void __print(const char *x) {cerr << '"' << x << '"';}
+void __print(const string &x) {cerr << '"' << x << '"';}
+void __print(bool x) {cerr << (x ? "true" : "false");}
+
+template<typename T, typename V>
+void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
+template<typename T>
+void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
+void _print() {cerr << "]" << endl;}
+template <typename T, typename... V>
+void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+
+#ifndef ONLINE_JUDGE
+#define deb(x...) cerr << "[" << #x << "] = ["; _print(x)
+#else
+#define deb(x...)
+#endif
+
+const double PI = 3.1415926535897932384626;
+const ll oo = 1e18;
+
+ll n, m, a, b, w;
+
+void solution(ll testno) {
     cin >> n >> m;
-    adj.resize(n + 1);
-    for (long i = 0; i < m; ++i)
-    {
-        cin >> a >> b >> c;
-        adj[a].push_back({b, c});
-    }
-    vis.resize(n + 1, 0);
-    for (int i = 1; !f && i <= n; ++i)
-    {
-        cycle.clear();
-        if (vis[i] == 0)
-            negCycle(i, 0);
+    vvll e;
+    fo(i,0,m) {
+        cin >> a >> b >> w;
+        e.pb({a, b, w});
     }
 
-    if (!f)
-        cout << "NO";
+    vll dist(n + 1, oo), par(n + 1, 0);
+    dist[1] = 0;
+    ll f;
+    fo(i,1,n+1) {
+        f = 0;
+        for(auto &ed : e) {
+            if(dist[ed[0]] + ed[2] < dist[ed[1]]) {
+                dist[ed[1]] = dist[ed[0]] + ed[2];
+                par[ed[1]] = ed[0];
+                f = ed[1];
+            }
+        }
+    }
+
+    if(!f) {
+        cout << "NO\n";
+        return;
+    }
+    else {
+        cout << "YES\n";
+        vll cycle;
+        fo(i,1,n+1) f = par[f];
+        for(ll x = f;; x = par[x]) {
+            cycle.pb(x);
+            if(x == f && cycle.size() > 1) break;
+        }
+        reverse(all(cycle));
+        for(auto &i : cycle) cout << i << " ";
+    }
 }
 
-int main()
+signed main()
 {
-    fast;
-    solve();
+    fastIO;
+    ll test = 1;
+    // cin >> test;
+    fo(i, 1, test + 1)
+        solution(i);
     return 0;
 }

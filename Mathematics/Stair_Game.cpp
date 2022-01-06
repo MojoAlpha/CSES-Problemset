@@ -34,12 +34,13 @@ const ll oo = 1e18;
 void solution()
 {
     ll n, a, x = 0;
-    cin >> n >> a;
+    cin >> n;
 
-    fo(i, 1, n)
+    fo(i, 0, n)
     {
         cin >> a;
-        x ^= a;
+        if(i & 1)
+            x ^= a;
     }
 
     if (x)

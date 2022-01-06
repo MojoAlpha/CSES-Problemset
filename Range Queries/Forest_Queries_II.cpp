@@ -55,52 +55,39 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
+const ll sz = 1002;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
-
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
-}
-
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
-    }
-}
+int n, q, qr, x1, x2, y1, y2;
+int dp[sz][sz], grid[sz][sz];
 
 void solution(ll testno) {
-    cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
+    cin >> n >> q;
+    vector<string> mat(n);
+    fo(i,0,n) cin >> mat[i];
+    
+    fo(i,1,n+1) {
+        fo(j,1,n+1) {
+            if(grid[i][j] == '*') grid[i][j] = 1;
+            else grid[i][j] = 0;
+        }
     }
-    ll ans = 0;
 
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
+    fo(i,1,n+1) fo(j,1,n+1) dp[i][j] = grid[i][j] + dp[i][j - 1] + dp[i - 1][j] - dp[i - 1][j - 1];
+
+    while(q--) {
+        cin >> qr;
+        if(qr == 1) {
+            cin >> y1 >> x1;
+        }
+        else {
+            cin >> y1 >> x1 >> y2 >> x2;
+        }
     }
-    cout << ans;
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
     // cin >> test;
     fo(i, 1, test + 1) {

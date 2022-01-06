@@ -55,52 +55,40 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 const double PI = 3.1415926535897932384626;
 const ll oo = 1e18;
-const ll sz = 10 * N;
+const double EPS = 1e-6;
 
-ll lpf[sz], mobius[sz], cnt[sz], n, x;
+ll binPow(ll a, ll n, ll m) {
+   ll res = 1;
+   a %= m;
 
-void least_prime_factor() {
-    for(ll i = 2; i < sz; ++i) {
-        if(!lpf[i]) {
-            for(ll j = i; j < sz; j += i)
-                if(!lpf[j]) lpf[j] = i;
-        }
-    }
+   while(n) {
+       if(n & 1) res = (res * a) % m;
+       a = (a * a) % m;
+       n >>= 1;
+   }
+   return res;
 }
 
-void mobius_calculate() {
-    for(ll i = 1; i < sz; ++i) {
-        if(i == 1) mobius[i] = 1;
-        else {
-            if(lpf[i / lpf[i]] == lpf[i]) mobius[i] = 0;
-            else mobius[i] = -1 * mobius[i / lpf[i]];
-        }
-    }
+ll inverse(ll n) {
+    return binPow(n, MOD - 2, MOD);
 }
 
 void solution(ll testno) {
+    ll n;
     cin >> n;
-    fo(i,0,n) {
-        cin >> x;
-        cnt[x]++;
+    if(n % 2 == 0) {
+        ll pw = n * n, inv4 = inverse(4);
+        cout << (binPow(2, pw, MOD) + binPow(2, pw / 4, MOD) * 2 + binPow(2, pw / 2, MOD) % MOD) * inv4 % MOD;
     }
-    ll ans = 0;
-
-    fo(i,1,sz) {
-        if(mobius[i] == 0) continue;
-        ll d = 0;
-        for(ll j = i; j < sz; j += i)
-            d += cnt[j];
-        ans += ((d * (d - 1)) / 2) * mobius[i];
+    else {
+        ll pw = n * n, inv4 = inverse(4);
+        cout << (binPow(2, pw, MOD) + 2 * (binPow(2, (pw - 1) / 4, MOD) * 2 + binPow(2, (pw - 1) / 2, MOD)) % MOD) * inv4 % MOD;
     }
-    cout << ans;
 }
 
 signed main()
 {
     fastIO;
-    least_prime_factor();
-    mobius_calculate();
     ll test = 1;
     // cin >> test;
     fo(i, 1, test + 1) {
