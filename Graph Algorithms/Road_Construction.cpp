@@ -4,6 +4,7 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
+#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -12,9 +13,10 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout << fixed << setprecision(6);
 
 typedef long long ll;
+typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -53,40 +55,56 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 2 * N;
-const ll v = 31;
+const ll oo = 9e18;
+const double EPS = 1e-6;
 
-int n, q, suc[sz][v], t[sz];
+int n, m, u, v, cmp_cnt, mx_cmp;
+vi cnt, cmp;
 
-void pre() {
-    fo(i,0,n) cin >> t[i];
+int find_root(int nd) {
+    return (nd == cmp[nd] ? nd : cmp[nd] = find_root(cmp[nd]));
+}
 
-    fo(i,0,n) suc[i][0] = --t[i];
-    fo(i,1,v)
-        fo(j,0,n) 
-            suc[j][i] = suc[suc[j][i - 1]][i - 1];   
+bool unite(int a, int b) {
+    int ra = find_root(a), rb = find_root(b);
+    if(ra == rb) return false;
+    if(cnt[ra] < cnt[rb]) swap(ra, rb);
+    cnt[ra] += cnt[rb];
+    cmp[rb] = ra;
+    mx_cmp = max(mx_cmp, cnt[ra]);
+    return true;
+}
+
+void init() {
+    cnt.assign(n, 1);
+    cmp.resize(n);
+    iota(all(cmp), 0);
+    cmp_cnt = n;
+    mx_cmp = 1;
 }
 
 void solution(int testno) {
-    cin >> n >> q;
-    pre();
-
-    while(q--) {
-        int x, k;
-        cin >> x >> k;
-        --x;
-        rfo(i,v-1,0) if(k >> i & 1) x = suc[x][i];
-        printf("%d\n", x + 1);
+    cin >> n >> m;
+    init();
+    fo(i,0,m) {
+        cin >> u >> v;
+        --u, --v;
+        cmp_cnt -= unite(u, v);
+        printf("%d %d\n", cmp_cnt, mx_cmp);
     }
 }
 
 signed main()
 {
     fastIO;
-    ll test = 1;
+    int test = 1;
+    clock_t begin, end;
 
-    fo(i, 1, test + 1)
+    fo(i,1,test+1) {
+        begin = clock();
         solution(i);
+        end = clock();
+        cerr << "[ Case :- " << i << " | Time Taken :- " << ((ld)end - (ld)begin) / CLOCKS_PER_SEC << " ]" << endl;
+    }
     return 0;
 }

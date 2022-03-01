@@ -4,6 +4,7 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
+#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -12,9 +13,10 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout << fixed << setprecision(6);
 
 typedef long long ll;
+typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -53,40 +55,51 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 2 * N;
-const ll v = 31;
+const ll oo = 9e18;
+const double EPS = 1e-6;
+const ll sz = 20;
 
-int n, q, suc[sz][v], t[sz];
+ll n, m, u, v, dp[sz][(1 << sz)];
+vll adj[sz];
 
-void pre() {
-    fo(i,0,n) cin >> t[i];
+ll solve(ll city, ll mask) {
+    if(mask == 0) return (city == n - 1);
+    ll &res = dp[city][mask];
+    if(res != -1) return res;
 
-    fo(i,0,n) suc[i][0] = --t[i];
-    fo(i,1,v)
-        fo(j,0,n) 
-            suc[j][i] = suc[suc[j][i - 1]][i - 1];   
+    res = 0;
+    for(auto &ed : adj[city]) {
+        if(mask & (1 << ed))
+            res += solve(ed, mask ^ (1 << ed));
+            res %= MOD;
+    }
+    return res;
 }
 
 void solution(int testno) {
-    cin >> n >> q;
-    pre();
-
-    while(q--) {
-        int x, k;
-        cin >> x >> k;
-        --x;
-        rfo(i,v-1,0) if(k >> i & 1) x = suc[x][i];
-        printf("%d\n", x + 1);
+    cin >> n >> m;
+    fo(i,0,m) {
+        cin >> u >> v;
+        --u, --v;
+        adj[u].pb(v);
     }
+    cout << solve(0, (1 << n) - 2);
+    cout << endl;
 }
 
 signed main()
 {
     fastIO;
-    ll test = 1;
+    mem(dp, -1);
+    int test = 1;
+    // cin >> test;
+    clock_t begin, end;
 
-    fo(i, 1, test + 1)
+    fo(i,1,test+1) {
+        begin = clock();
         solution(i);
+        end = clock();
+        cerr << "[ Case :- " << i << " | Time Taken :- " << ((ld)end - (ld)begin) / CLOCKS_PER_SEC << " ]" << endl;
+    }
     return 0;
 }

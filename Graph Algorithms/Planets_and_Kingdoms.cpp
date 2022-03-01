@@ -4,6 +4,7 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
+#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -12,9 +13,10 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout << fixed << setprecision(6);
 
 typedef long long ll;
+typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -53,40 +55,65 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 2 * N;
-const ll v = 31;
+const ll oo = 9e18;
+const double EPS = 1e-6;
 
-int n, q, suc[sz][v], t[sz];
+ll n, m, u, v;
+vvll adj, adjr;
+vll order, comp;
+vb vis;
 
-void pre() {
-    fo(i,0,n) cin >> t[i];
+void dfs1(ll ver) {
+    vis[ver] = true;
+    for(auto &ed : adj[ver])
+        if(!vis[ed]) dfs1(ed);
+    order.pb(ver);
+}
 
-    fo(i,0,n) suc[i][0] = --t[i];
-    fo(i,1,v)
-        fo(j,0,n) 
-            suc[j][i] = suc[suc[j][i - 1]][i - 1];   
+void dfs2(ll ver) {
+    vis[ver] = true;
+    comp.pb(ver);
+    for(auto &ed : adjr[ver])
+        if(!vis[ed]) dfs2(ed);
 }
 
 void solution(int testno) {
-    cin >> n >> q;
-    pre();
+    cin >> n >> m;
+    adj.resize(n);
+    adjr.resize(n);
+    vis.assign(n, false);
 
-    while(q--) {
-        int x, k;
-        cin >> x >> k;
-        --x;
-        rfo(i,v-1,0) if(k >> i & 1) x = suc[x][i];
-        printf("%d\n", x + 1);
+    fo(i,0,m) {
+        cin >> u >> v;
+        --u, --v;
+        adj[u].pb(v);
+        adjr[v].pb(u);
     }
+    fo(i,0,n) if(!vis[i]) dfs1(i);
+    reverse(all(order));
+    vll res(n, -1);
+    vis.assign(n, 0);
+    ll color = 1;
+
+    for(int x : order) {
+        if(!vis[x]) {
+            dfs2(x);
+            for(int y : comp) res[y] = color;
+            comp.clear();
+            color++;
+        }
+    }
+
+    cout << color - 1 << endl;
+    fo(i,0,n) cout << res[i] << " ";
 }
 
 signed main()
 {
     fastIO;
-    ll test = 1;
+    int test = 1;
 
-    fo(i, 1, test + 1)
+    fo(i,1,test+1)
         solution(i);
     return 0;
 }

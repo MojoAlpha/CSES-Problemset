@@ -4,6 +4,7 @@ using namespace std;
 
 #define N 100002
 #define MOD 1000000007
+#define MOD2 998244353
 #define fo(i, b, n) for (long i = b; i < n; ++i)
 #define rfo(i, b, n) for (long i = b; i >= n; --i)
 #define all(ar) ar.begin(), ar.end()
@@ -12,9 +13,10 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout << fixed << setprecision(6);
 
 typedef long long ll;
+typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -53,40 +55,44 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 2 * N;
-const ll v = 31;
+const ll oo = 9e18;
+const double EPS = 1e-6;
 
-int n, q, suc[sz][v], t[sz];
-
-void pre() {
-    fo(i,0,n) cin >> t[i];
-
-    fo(i,0,n) suc[i][0] = --t[i];
-    fo(i,1,v)
-        fo(j,0,n) 
-            suc[j][i] = suc[suc[j][i - 1]][i - 1];   
+ld getNumCount(ll ri, ll rj) {
+    if(ri < rj) return ri * (ri - 1) / 2;
+    return rj * (rj - 1) / 2 + (ri - rj) * rj;
 }
 
-void solution(int testno) {
-    cin >> n >> q;
-    pre();
+void solution(ll testno) {
+    int n;
+    cin >> n;
+    vi a(n);
+    fo(i,0,n) cin >> a[i];
 
-    while(q--) {
-        int x, k;
-        cin >> x >> k;
-        --x;
-        rfo(i,v-1,0) if(k >> i & 1) x = suc[x][i];
-        printf("%d\n", x + 1);
+    ld res = 0;
+    fo(i,0,n) {
+        fo(j,i+1,n) {
+            res += (getNumCount(a[i], a[j]) / (double)(a[i] * a[j]));
+        }
     }
+    cout << res;
+    printf("\n");
 }
 
 signed main()
 {
     fastIO;
-    ll test = 1;
+    int test = 1;
+    clock_t begin, end;
 
-    fo(i, 1, test + 1)
+    // cin >> test;
+    fo(i, 1, test + 1) {
+        begin = clock();
         solution(i);
+        end = clock();
+
+        ld time_taken = ((ld)end - (ld)begin) / (ld)CLOCKS_PER_SEC;
+        deb(i, time_taken);
+    }
     return 0;
 }

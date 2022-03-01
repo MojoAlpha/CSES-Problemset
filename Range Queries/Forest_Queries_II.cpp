@@ -13,9 +13,10 @@ using namespace std;
 #define fi first
 #define se second
 #define pb push_back
-#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout.precision(12);
+#define fastIO ios_base::sync_with_stdio(false); cin.tie(NULL); cout << fixed << setprecision(6);
 
 typedef long long ll;
+typedef long double ld;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -54,45 +55,76 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 const double PI = 3.1415926535897932384626;
-const ll oo = 1e18;
-const ll sz = 1002;
+const ll oo = 9e18;
+const double EPS = 1e-6;
 
-int n, q, qr, x1, x2, y1, y2;
-int dp[sz][sz], grid[sz][sz];
+int n, q;
+vector<string> mat;
+vvi bit;
 
-void solution(ll testno) {
+int sum(int x, int y) {
+    int ret = 0;
+    if(x < 0 || y < 0) return ret;
+    for(int i = x; i >= 0; i = (i & (i + 1)) - 1)
+        for(int j = y; j >= 0; j = (j & (j + 1)) - 1)
+            ret += bit[i][j];
+    return ret;
+}
+
+void add(int x, int y, int delta) {
+    for(int i = x; i < n; i = i | (i + 1))
+        for(int j = y; j < n; j = j | (j + 1))
+            bit[i][j] += delta;
+}
+
+void solution(int testno) {
     cin >> n >> q;
-    vector<string> mat(n);
+    mat.resize(n);
+    bit.resize(n, vi(n, 0));
+
     fo(i,0,n) cin >> mat[i];
+    fo(i,0,n) fo(j,0,n) if(mat[i][j] == '*') add(i, j, 1);
     
-    fo(i,1,n+1) {
-        fo(j,1,n+1) {
-            if(grid[i][j] == '*') grid[i][j] = 1;
-            else grid[i][j] = 0;
-        }
-    }
-
-    fo(i,1,n+1) fo(j,1,n+1) dp[i][j] = grid[i][j] + dp[i][j - 1] + dp[i - 1][j] - dp[i - 1][j - 1];
-
     while(q--) {
+        int qr;
         cin >> qr;
         if(qr == 1) {
-            cin >> y1 >> x1;
+            int xi, yi;
+            cin >> xi >> yi;
+            xi--, yi--;
+            if(mat[xi][yi] == '.') {
+                mat[xi][yi] = '*';
+                add(xi, yi, 1);
+            }
+            else {
+                mat[xi][yi] = '.';
+                add(xi, yi, -1);
+            }
         }
         else {
-            cin >> y1 >> x1 >> y2 >> x2;
+            int xi, yi, xj, yj;
+            cin >> xi >> yi >> xj >> yj;
+            xi--, yi--, xj--, yj--;
+            cout << sum(xj, yj) - sum(xi - 1, yj) - sum(xj, yi - 1) + sum(xi - 1, yi - 1) << endl;
         }
     }
+
+    cout << endl;
 }
 
 signed main()
 {
     fastIO;
-    ll test = 1;
+    int test = 1;
     // cin >> test;
-    fo(i, 1, test + 1) {
+    clock_t begin, end;
+
+    fo(i,1,test+1) {
+        begin = clock();
         solution(i);
-        cout << endl;
+        end = clock();
+
+        cerr << "[ Case :- " << i << " | Time Taken :- " << ((ld)end - (ld)begin) / CLOCKS_PER_SEC << " ]" << endl;
     }
     return 0;
 }
